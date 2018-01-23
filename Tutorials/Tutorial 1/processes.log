@@ -1,0 +1,4 @@
+  PID TTY          TIME CMD
+    2 tty1     00:00:03 bash
+  594 tty1     00:00:00 question5.sh
+  595 tty1     00:00:00 ps
