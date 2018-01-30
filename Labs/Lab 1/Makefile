@@ -1,2 +1,2 @@
 build:
-	gcc -Wall -g -Wextra -std=c99 hello.c -o hello
+	gcc -Wall -g -Wextra -std=c99 hello.c -o hello.o
