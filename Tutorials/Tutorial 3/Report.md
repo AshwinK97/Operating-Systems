@@ -73,3 +73,8 @@ Our TA is Eric
 ```
 
 ## 5. What is the difference between malloc and calloc?
+Both **malloc** and **calloc** are used to allocate memory for storing data. However, calloc will initialize all the memory to zero while malloc simply allocates the space.
+
+# Application Questions
+
+## 1. 
