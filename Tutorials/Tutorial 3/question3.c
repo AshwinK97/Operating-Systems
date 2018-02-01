@@ -20,7 +20,7 @@ void save_student(student_t *stu) {
 	strcat(str, stu->age);
 	strcat(str, ",");
 	strcat(str, stu->start_year);
-    strcat(str, "\n");
+	strcat(str, "\n");
 
 	// write student info to file
 	fputs(str, f);
