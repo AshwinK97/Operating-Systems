@@ -63,10 +63,10 @@ int main() {
 	// allocate grades array to be #ofstudents*sizeofgrade
 	grade_t *grades = (grade_t *) malloc(num_students * sizeof(grade_t));
 
-	// getthe student's grades
+	// get the student's grades
 	int i;
 	for (i=0; i<num_students; i++) {	
-		printf("Student %d:\n", i);
+		printf("\nStudent %d:\n", i+1);
 		printf("id: ");
 		scanf("%d", &grades[i].student_id);
 		printf("mark: ");
