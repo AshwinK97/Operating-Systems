@@ -4,26 +4,15 @@
 
 // define student structure
 typedef struct student {
-	char student_id[25];
-	char age[25];
-	char start_year[25];
+	int student_id;
+	int age;
+	int start_year;
 } student_t;
 
 void save_student(student_t *stu) {
 	// open students.txt in append mode
 	FILE *f = fopen("students.txt", "a");
-	
-	// string buffer for line to write
-	char str[50];
-	strcpy(str, stu->student_id);
-	strcat(str, ",");
-	strcat(str, stu->age);
-	strcat(str, ",");
-	strcat(str, stu->start_year);
-	strcat(str, "\n");
-
-	// write student info to file
-	fputs(str, f);
+	fprintf(f, "%d,%d,%d\n", stu->student_id, stu->age, stu->start_year);
 	fclose(f);
 }
 
@@ -34,11 +23,11 @@ int main() {
 	
 	// get inputs
 	printf("Enter your student id: ");
-	scanf("%s", stu->student_id);	
+	scanf("%d", &stu->student_id);	
 	printf("Enter your age: ");
-	scanf("%s", stu->age);
+	scanf("%d", &stu->age);
 	printf("Enter your start year at UOIT: ");
-	scanf("%s", stu->start_year);
+	scanf("%d", &stu->start_year);
 
 	// write to file and free memory
 	save_student(stu);
