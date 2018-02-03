@@ -61,7 +61,7 @@ We can use malloc to allocate a specific amount of memory for data. In the follo
 #include <string.h>
 
 int main() {
-	char *text = (char*)malloc(5 * sizeof(char));
+	char *text = (char *) malloc(5 * sizeof(char));
 	strcpy(text, "Eric");
 	printf("Our TA is %s\n", text);
 }
@@ -73,8 +73,8 @@ Our TA is Eric
 ```
 
 ## 5. What is the difference between malloc and calloc?
-Both **malloc** and **calloc** are used to allocate memory for storing data. However, calloc will initialize all the memory to zero while malloc simply allocates the space.
+Both **malloc** and **calloc** are used to dynamically allocate memory for storing data. However, calloc will initialize all the memory to zero while malloc simply allocates the space.
 
 # Application Questions
 
-## 1. 
+All code and output [here](https://github.com/AshwinK97/Operating-Systems/tree/master/Tutorials/Tutorial%203). Also can be found inside the zip file.
