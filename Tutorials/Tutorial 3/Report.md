@@ -77,4 +77,6 @@ Both **malloc** and **calloc** are used to dynamically allocate memory for stori
 
 # Application Questions
 
-All code and output [here](https://github.com/AshwinK97/Operating-Systems/tree/master/Tutorials/Tutorial%203). Also can be found inside the zip file.
+All code and output can be found [here](https://github.com/AshwinK97/Operating-Systems/tree/master/Tutorials/Tutorial%203).
+
+Link to clone repository: [git@github.com:AshwinK97/Operating-Systems.git](git@github.com:AshwinK97/Operating-Systems.git)
