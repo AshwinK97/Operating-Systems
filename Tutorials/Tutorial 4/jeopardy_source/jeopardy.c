@@ -55,12 +55,9 @@ int main(int argc, char *argv[])
         fgets(buffer, BUFFER_LEN, stdin);
         printf("[before]%s[after]", buffer);
 
-<<<<<<< HEAD
 		if (strcmp(buffer, "hello\n") == 0) printf(":)\n");
 		if (strcmp(buffer, "world\n") == 0) printf(":)\n");
 
-=======
->>>>>>> c6d21356facda94e1ce6c0452df57af0c40c2781
         // Call functions from the questions and players source files
 
         // Execute the game until all questions are answered
