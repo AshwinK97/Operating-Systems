@@ -3,7 +3,7 @@
  *
  * Copyright (C) 2017, <GROUP MEMBERS>
  * All rights reserved.
- * 
+ *
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -19,7 +19,17 @@
 
 // Put global environment variables here
 
+const char PROMPT[] = ">>";
+
 // Define functions declared in myshell.h here
+
+void showHelp() {
+	FILE *f = fopen("README.md", "r");
+	char row[255];
+	while (fgets(row, sizeof(row), f) != NULL)
+		puts(row);
+	fclose(f);
+}
 
 int main(int argc, char *argv[]) {
 
@@ -30,25 +40,41 @@ int main(int argc, char *argv[]) {
 	char* token;
 
     // Parse the commands provided using argc and argv
+	
+	printf("%s", PROMPT);
 
     // Perform an infinite loop getting command input from users
     while (fgets(buffer, BUFFER_LEN, stdin) != NULL) {
-        
-		// Perform string tokenization to get the command and argument
+
+		// remove newline characters
 		token = strtok(buffer, "\n");
+		// get command
 		token = strtok(buffer, " ");
 		strcpy(command, token);
 
-        // Check the command and execute the operations for each command
-        // cd command -- change the current directory
-        if (strcmp(command, "cd") == 0) {
-			token = strtok(NULL, " ");
+		// get arguments
+		token = strtok(NULL, " "); // check if arguments exist
+		if (token != NULL) {
 			strcpy(arg, token);
-			printf("you changed directory to %s\n", arg);
+			while (1) {
+				token = strtok(NULL, " ");
+				if (token == NULL)
+					break;
+				strcat(arg, " ");
+				strcat(arg, token);
+			}
+		}
+
+        // COMAND IMPLEMENTATION
+
+		if (strcmp(command, "help") == 0) {
+			showHelp();
+		}
+	
+		else if (strcmp(command, "cd") == 0) {
+			printf("you typed cd with arguments %s\n", arg);
         }
 
-        // other commands here...
-        
         // quit command -- exit the shell
 		else if (strcmp(command, "exit") == 0) {
 			printf("Exiting shell\n");
@@ -59,6 +85,9 @@ int main(int argc, char *argv[]) {
         else {
             fputs("Unsupported command, use help to display the manual\n", stderr);
         }
+
+		// print prompt
+		printf("%s", PROMPT);
     }
     return EXIT_SUCCESS;
 }
