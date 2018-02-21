@@ -41,9 +41,10 @@ int main(int argc, char *argv[])
     char buffer[BUFFER_LEN] = { 0 };
 
     // Display the game introduction and initialize the questions
-    initialize_game();
+    //initialize_game();
 
     // Prompt for players names
+    initialize_players(players, NUM_PLAYERS);
     
     // initialize each of the players in the array
 
