@@ -18,6 +18,8 @@
 #define NUM_PLAYERS 4
 
 // Put global environment variables here
+int game_state;
+char *chosen_option = malloc(BUFFER_LEN);
 
 // Processes the answer from the user containing what is or who is and tokenizes it to retrieve the answer.
 void tokenize(char *input, char **tokens);
@@ -25,23 +27,16 @@ void tokenize(char *input, char **tokens);
 // Displays the game results for each player, their name and final score, ranked from first to last place
 void show_results(struct player *players, int num_players);
 
-int game_state;
-
-
 int main(int argc, char *argv[])
 {
     // An array of 4 players, may need to be a pointer if you want it set dynamically
     struct player players[NUM_PLAYERS];
-
-    // EXAMPLE: player 1 is named Fred
-    strcpy(players[0].name, "Fred");
-    printf("%s\n", players[0].name);
     
     // Buffer for user input
     char buffer[BUFFER_LEN] = { 0 };
 
     // Display the game introduction and initialize the questions
-    //initialize_game();
+    initialize_game();
 
     // Prompt for players names
     initialize_players(players, NUM_PLAYERS);
@@ -52,15 +47,10 @@ int main(int argc, char *argv[])
     game_state = 1;
     while (game_state)
     {
-        // EXAMPLE: This line gets a line of input from the user
-        fgets(buffer, BUFFER_LEN, stdin);
-        printf("[before]%s[after]", buffer);
-
-		if (strcmp(buffer, "hello\n") == 0) printf(":)\n");
-		if (strcmp(buffer, "world\n") == 0) printf(":)\n");
 
         // Call functions from the questions and players source files
-
+        display_categories();
+        scanf("%s", chosen_option);
         // Execute the game until all questions are answered
 
         // Display the final results and exit
