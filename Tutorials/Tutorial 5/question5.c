@@ -22,15 +22,16 @@ void *save_bellcurve(void *arg) {
 	pthread_barrier_wait(&barrier); // wait for barrier sync
 	pthread_mutex_lock(&mutex); // lock mutex
 	
-	int *i = arg;
-	total_grade += grades[*i];
-	total_bellcurve += (float)grades[*i]*1.5;
+	int i = *((int*)arg); // convert pointer arg to int
+	//printf("%d ", grades[i]);
+	total_grade += grades[i];
+	total_bellcurve += (float)grades[i]*1.5;
 	
 	FILE *fp = fopen(OUTFILE, "a");
-	fprintf(fp, "%f\n", (float)grades[*i]*1.5);
+	fprintf(fp, "%f\n", (float)grades[i]*1.5);
 
 	pthread_mutex_unlock(&mutex); // unlock mutex
-	return NULL;
+	pthread_exit(0); // have to exit this thread for some reason
 }
 
 void *read_grades() {
@@ -41,7 +42,7 @@ void *read_grades() {
 	for (i=0; i<COUNT; i++)
 		fscanf(fp, "%d", &grades[i]);
 	fclose(fp);
-
+	
 	pthread_mutex_unlock(&mutex); // unlock mutex
 	pthread_barrier_wait(&barrier); // wait for barrier sync
 	return NULL;
@@ -70,7 +71,7 @@ int main() {
 	// create the write threads
 	int i;
 	for (i=0; i<COUNT; i++) {
-		if (pthread_create(&w_threads[i], NULL, &save_bellcurve, &i)) {
+		if (pthread_create(&w_threads[i], NULL, &save_bellcurve, (void *)(&i))) {
 			printf("failed to create write thread %d\n", i);
 			return -1;
 		}
@@ -91,6 +92,10 @@ int main() {
 	// free resources
 	pthread_barrier_destroy(&barrier);
 	pthread_mutex_destroy(&mutex);
+	
+	// print total and average, before and after bellcurve
+	printf("Actual Total: %d \nActual Average: %f\n", total_grade, (float)(total_grade/COUNT));
+	printf("Bellcurve Total: %f \nBellcurve Average: %f\n", total_bellcurve, total_bellcurve/COUNT);
 	
 	return 0;
 }
