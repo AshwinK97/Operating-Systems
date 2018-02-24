@@ -2,7 +2,7 @@
 
 ## 1. Explain pthread\_create, pthread\_join and pthread\_exit.
 
-### pthread\_create(pthread\_t *thread, const pthread\_attr\_t *attr, void *(*start_routine)(void*), void *arg)
+### pthread\_create(pthread\_t \*thread, const pthread\_attr\_t \*attr, void \*(\*start_routine)(void\*), void \*arg)
 This function is used to create a new thread within a process. Upon successful creation, the ID of the thread is stored in the location *thread*. When the thread is created, it will execute the *start\_routine* function with argument *arg*. If the start routine returns, the thread behaves as if *pthread\_exit()* was called.
 
 ### pthread\_join(pthread\_t thread, void \*\*value\_ptr)
