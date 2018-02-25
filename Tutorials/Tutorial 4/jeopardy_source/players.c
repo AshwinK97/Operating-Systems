@@ -28,12 +28,21 @@ void initialize_players(struct player *players, int NUM_PLAYERS) {
 }
 
 // Returns true if the player name matches one of the existing players
-bool player_exists(struct player *players, int num_players, char *name) {
+bool player_exists(struct player *players, int NUM_PLAYERS, char *name) {
+    int i = 0;
+
+    while(i < NUM_PLAYERS) {
+        if(strcmp(&players[i], name) == 0){
+            printf("%s chose your category and price!\n", name);
+            return true;
+        }
+        i++;
+    }
     return false;
 }
 
 // Go through the list of players and update the score for the 
 // player given their name
-void update_score(struct player *players, int num_players, char *name, int score) {
+void update_score(struct player *players, int NUM_PLAYERS, char *name, int score) {
     
 }

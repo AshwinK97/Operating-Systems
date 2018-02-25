@@ -19,7 +19,8 @@
 
 // Put global environment variables here
 int game_state;
-char *chosen_option = malloc(BUFFER_LEN);
+char chosen_option[BUFFER_LEN];
+char chosen_player[BUFFER_LEN];
 
 // Processes the answer from the user containing what is or who is and tokenizes it to retrieve the answer.
 void tokenize(char *input, char **tokens);
@@ -50,9 +51,13 @@ int main(int argc, char *argv[])
 
         // Call functions from the questions and players source files
         display_categories();
-        scanf("%s", chosen_option);
-        // Execute the game until all questions are answered
 
+        do {
+        printf("%s\n", "Who's turn is it?");
+        scanf("%s", chosen_player);
+        } while(!player_exists(players, NUM_PLAYERS, chosen_player));
+        // Execute the game until all questions are answered
+        
         // Display the final results and exit
     }
     return EXIT_SUCCESS;
