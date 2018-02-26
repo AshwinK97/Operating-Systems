@@ -17,12 +17,10 @@
 #define BUFFER_LEN 256
 #define NUM_PLAYERS 4
 
-#define DELIM "-"
+#define DELIM " "
 
 // Put global environment variables here
 int game_state;
-char chosen_option[BUFFER_LEN];
-char chosen_player[BUFFER_LEN];
 
 // Processes the answer from the user containing what is or who is and tokenizes it to retrieve the answer.
 char **tokenize(char *input){
@@ -68,7 +66,14 @@ int main(int argc, char *argv[])
     
     // Buffer for user input
     char buffer[BUFFER_LEN] = { 0 };
+    char chosen_option[BUFFER_LEN];
+    char chosen_player[BUFFER_LEN];
+    char answer[BUFFER_LEN];
+
     char **tokenized_chosen_option = malloc(BUFFER_LEN * sizeof(char*));
+    char **tokenized_answer = malloc(BUFFER_LEN * sizeof(char*));
+
+    int bytes_read;
 
     // Display the game introduction and initialize the questions
     initialize_game();
@@ -87,16 +92,28 @@ int main(int argc, char *argv[])
         display_categories();
 
         do {
-        printf("%s\n", "Who's turn is it? Enter your name: ");
-        scanf("%s", chosen_player);
+            printf("%s\n", "Who's turn is it? Enter your name: ");
+            fgets(chosen_player, BUFFER_LEN, stdin);
         } while(!player_exists(players, NUM_PLAYERS, chosen_player));
         
-        printf("%s Choose your category and price!\n", chosen_player); 
-        printf("(Make sure to use a '-' as your delimiter)\n");
-        scanf("%s", chosen_option);
-        printf("%s\n", chosen_option);
-        tokenized_chosen_option = tokenize(chosen_option);
+        do {
+            printf("%s Choose your category and price!\n", chosen_player); 
+            printf("(Make sure to use a '-' as your delimiter)\n");
+
+            fgets(chosen_option, BUFFER_LEN, stdin);
+            tokenized_chosen_option = tokenize(chosen_option);
+        } while(already_answered(tokenized_chosen_option[0], atoi(tokenized_chosen_option[1])));
         
+        display_question(tokenized_chosen_option[0], atoi(tokenized_chosen_option[1]));
+
+        fgets(answer, BUFFER_LEN, stdin);
+        tokenized_answer = tokenize(answer);
+
+        if (valid_answer(tokenized_chosen_option[0], atoi(tokenized_chosen_option[1]), tokenized_answer[2])) {
+            printf("Correct!");
+        } else {
+            printf("Incorrect!");
+        }
         
         // Display the final results and exit
         if(!game_state){

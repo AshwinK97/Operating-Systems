@@ -30,6 +30,11 @@ void initialize_players(struct player *players, int NUM_PLAYERS) {
 // Returns true if the player name matches one of the existing players
 bool player_exists(struct player *players, int NUM_PLAYERS, char *name) {
     int i = 0;
+    
+    // Remove \n characters
+    if(strstr(name, "\n") != NULL){
+        name = strtok(name, "\n");
+    }
 
     while(i < NUM_PLAYERS) {
         if(strcmp(&players[i], name) == 0){

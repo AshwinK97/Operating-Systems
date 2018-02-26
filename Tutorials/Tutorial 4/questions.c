@@ -48,7 +48,14 @@ void display_categories(void)
 // Displays the question for the category and dollar value
 void display_question(char *category, int value)
 {
-
+    int i = 0;
+    while(i < NUM_QUESTIONS){
+        if(strcmp(&questions[i].category, category) == 0 && questions[i].value == value){
+            printf("%s-%d?\n", &questions[i].category, questions[i].value);
+            printf("%s\n", "What's your answer (who is or what is): ");
+        }
+        i++;
+    }
 }
 
 // Returns true if the answer is correct for the question for that category and dollar value
@@ -61,6 +68,15 @@ bool valid_answer(char *category, int value, char *answer)
 // Returns true if the question has already been answered
 bool already_answered(char *category, int value)
 {
+    int i = 0;
+
     // lookup the question and see if it's already been marked as answered
-    return false;
+    while(i < NUM_QUESTIONS){
+        if(strcmp(&questions[i].category, category) == 0 && questions[i].value == value && !questions[i].answered){
+            return false;
+        }
+        i++;
+    }
+    // return true if already exists
+    return true;
 }
