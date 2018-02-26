@@ -48,5 +48,13 @@ bool player_exists(struct player *players, int NUM_PLAYERS, char *name) {
 // Go through the list of players and update the score for the 
 // player given their name
 void update_score(struct player *players, int NUM_PLAYERS, char *name, int score) {
-    
+    int i = 0;
+
+    while(i < NUM_PLAYERS) {
+        if(strcmp(&players[i], name) == 0){
+            players[i].score += score;
+            printf("%d\n", players[i].score);
+        }
+        i++;
+    }
 }

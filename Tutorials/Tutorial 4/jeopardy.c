@@ -110,11 +110,12 @@ int main(int argc, char *argv[])
         tokenized_answer = tokenize(answer);
 
         if (valid_answer(tokenized_chosen_option[0], atoi(tokenized_chosen_option[1]), tokenized_answer[2])) {
-            printf("Correct!");
+            printf("Correct!\n");
+            update_score(players, NUM_PLAYERS, chosen_player, atoi(tokenized_chosen_option[1]));
         } else {
-            printf("Incorrect!");
+            printf("Incorrect!\n");
         }
-        
+
         // Display the final results and exit
         if(!game_state){
             printf("Works!");
