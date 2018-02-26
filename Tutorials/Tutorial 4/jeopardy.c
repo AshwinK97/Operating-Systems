@@ -59,10 +59,15 @@ int main(int argc, char *argv[])
     // An array of 4 players, may need to be a pointer if you want it set dynamically
     struct player players[NUM_PLAYERS];
 
-    strcpy(players[0].name, "a");
+    /*strcpy(players[0].name, "a");
     strcpy(players[1].name, "s");
     strcpy(players[2].name, "d");
     strcpy(players[3].name, "f");
+
+    players[0].score = 123;
+    players[1].score = 95;
+    players[2].score = 352;
+    players[3].score = 100;*/
     
     // Buffer for user input
     char buffer[BUFFER_LEN] = { 0 };
@@ -79,7 +84,7 @@ int main(int argc, char *argv[])
     initialize_game();
 
     // Prompt for players names
-    //initialize_players(players, NUM_PLAYERS);
+    initialize_players(players, NUM_PLAYERS);
     
     // initialize each of the players in the array
 
@@ -87,6 +92,7 @@ int main(int argc, char *argv[])
     game_state = 1;
     while (game_state)
     {
+        display_results(players, NUM_PLAYERS);
 
         // Call functions from the questions and players source files
         display_categories();

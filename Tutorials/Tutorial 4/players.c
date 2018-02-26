@@ -15,10 +15,18 @@
 // Initializes player names and stores in system
 void initialize_players(struct player *players, int NUM_PLAYERS) {
     int i = 0;
+    char buffer[BUFFER_LEN];
 
     while(i < NUM_PLAYERS) {
         printf("What's your name player %d? \n", i);
-        scanf("%s", players[i].name);
+        fgets(buffer, BUFFER_LEN, stdin);
+
+        // Remove \n characters
+        size_t ln = strlen(buffer)-1;
+        if (buffer[ln] == '\n')
+            buffer[ln] = '\0';
+        
+        strcpy(players[i].name, buffer);
         players[i].score = 0;
 
         printf("Welcome %s! Score: %d\n", players[i].name, players[i].score);
@@ -56,5 +64,26 @@ void update_score(struct player *players, int NUM_PLAYERS, char *name, int score
             printf("%d\n", players[i].score);
         }
         i++;
+    }
+}
+
+void display_results(struct player *players, int NUM_PLAYERS){
+    for (int i = 0; i < NUM_PLAYERS; i++)                     //Loop for ascending ordering
+	{
+		for (int j = 0; j < NUM_PLAYERS; j++)             //Loop for comparing other values
+		{
+			if (players[j].score < players[i].score)                //Comparing other array elements
+			{
+				struct player tmp = players[i];         //Using temporary variable for storing last value
+				players[i] = players[j];            //replacing value
+				players[j] = tmp;             //storing last value
+			}  
+		}
+	}
+
+    int k = 0;
+    while(k < NUM_PLAYERS){
+        printf("%d: %s %d\n", k+1, players[k].name, players[k].score);
+        k++;
     }
 }
