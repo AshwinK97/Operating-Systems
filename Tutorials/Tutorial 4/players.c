@@ -33,7 +33,6 @@ bool player_exists(struct player *players, int NUM_PLAYERS, char *name) {
 
     while(i < NUM_PLAYERS) {
         if(strcmp(&players[i], name) == 0){
-            printf("%s chose your category and price!\n", name);
             return true;
         }
         i++;
