@@ -21,6 +21,7 @@
 
 // Put global environment variables here
 int game_state;
+int turn;
 
 // Processes the answer from the user containing what is or who is and tokenizes it to retrieve the answer.
 char **tokenize(char *input){
@@ -90,6 +91,7 @@ int main(int argc, char *argv[])
 
     // Perform an infinite loop getting command input from users until game ends
     game_state = 1;
+    turn = 0;
     while (game_state)
     {
         display_results(players, NUM_PLAYERS);
@@ -122,10 +124,12 @@ int main(int argc, char *argv[])
             printf("Incorrect!\n");
         }
 
+        turn++;
+
         // Display the final results and exit
-        if(!game_state){
-            printf("Works!");
-            game_state = 1;
+        if(turn == NUM_QUESTIONS){
+            display_results(players, NUM_PLAYERS);
+            game_state = 0;
         }
     }
     return EXIT_SUCCESS;
