@@ -9,6 +9,6 @@ There are 12 questions total. Once they are depleted, the game ends displaying t
 
 Enjoy!
 
-Github cloine link: git@github.com:AshwinK97/Operating-Systems.git
+Github clone link: git@github.com:AshwinK97/Operating-Systems.git
 
 Path: Tutorials/Tutorial 4
