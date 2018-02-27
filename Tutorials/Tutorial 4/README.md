@@ -8,3 +8,7 @@ A question is given to the player to answer. If they answer correctly, they are 
 There are 12 questions total. Once they are depleted, the game ends displaying the score of all players.
 
 Enjoy!
+
+Github cloine link: git@github.com:AshwinK97/Operating-Systems.git
+
+Path: Tutorials/Tutorial 4
