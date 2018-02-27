@@ -53,7 +53,8 @@ void display_question(char *category, int value)
     int i = 0;
     while(i < NUM_QUESTIONS){
         if(strcmp(&questions[i].category, category) == 0 && questions[i].value == value){
-            printf("\n%s-%d: %s\n", &questions[i].category, questions[i].value, &questions[i].question);
+            printf("--------------\n");
+            printf("%s-%d: %s\n", &questions[i].category, questions[i].value, &questions[i].question);
             printf("%s\n", "What's your answer (who/what is/are): ");
         }
         i++;
@@ -69,6 +70,7 @@ bool valid_answer(char *category, int value, char *answer)
     while(i < NUM_QUESTIONS){
         if(strcmp(&questions[i].category, category) == 0 && questions[i].value == value) {
             questions[i].answered = true;
+            printf("--------------\n");
             printf("The acutal answer is: %s\n", questions[i].answer);
             if (strcmp(&questions[i].answer, answer) == 0){
                 return true;
@@ -91,6 +93,9 @@ bool already_answered(char *category, int value)
         }
         i++;
     }
-    // return true if already exists
+    // return true if already exists after showing error
+    printf("--------------\n");
+    printf("%s\n", "Looks like that's been taken, try again.");
+    sleep(1);
     return true;
 }

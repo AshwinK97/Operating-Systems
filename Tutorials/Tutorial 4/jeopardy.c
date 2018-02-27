@@ -99,21 +99,27 @@ int main(int argc, char *argv[])
         // Call functions from the questions and players source files
         display_categories();
 
+        // Choose the person playing this round by name
+        // Decision is don't physically, and name is entered
         do {
             printf("%s\n", "Who's turn is it? Enter your name: ");
             fgets(chosen_player, BUFFER_LEN, stdin);
         } while(!player_exists(players, NUM_PLAYERS, chosen_player));
         
+        // Chosen player chooses category and value they want to play
         do {
-            printf("\n%s choose your category and price!\n", chosen_player); 
+            printf("--------------\n");
+            printf("%s choose your category and price!\n", chosen_player); 
             printf("(Make sure to use a ' ' as your delimiter)\n");
 
             fgets(chosen_option, BUFFER_LEN, stdin);
             tokenized_chosen_option = tokenize(chosen_option);
         } while(already_answered(tokenized_chosen_option[0], atoi(tokenized_chosen_option[1])));
         
+        // Question is displayed if available
         display_question(tokenized_chosen_option[0], atoi(tokenized_chosen_option[1]));
 
+        // Ensure answer format matches and tokenize
         do {
             fgets(answer, BUFFER_LEN, stdin);
             tokenized_answer = tokenize(answer);
@@ -122,7 +128,8 @@ int main(int argc, char *argv[])
                 display_question(tokenized_chosen_option[0], atoi(tokenized_chosen_option[1]));
             }
         } while(tokenized_answer[2] == NULL);
-
+        
+        // Judge answer and reward players
         if (valid_answer(tokenized_chosen_option[0], atoi(tokenized_chosen_option[1]), tokenized_answer[2])) {
             printf("Correct!\n");
             update_score(players, NUM_PLAYERS, chosen_player, atoi(tokenized_chosen_option[1]));
@@ -130,6 +137,7 @@ int main(int argc, char *argv[])
             printf("Incorrect!\n");
         }
         
+        // Allow players to see the results and increment the turn counter
         sleep(2);
         turn++;
 

@@ -44,6 +44,7 @@ bool player_exists(struct player *players, int NUM_PLAYERS, char *name) {
         name = strtok(name, "\n");
     }
 
+    // Check if player is in array
     while(i < NUM_PLAYERS) {
         if(strcmp(&players[i], name) == 0){
             return true;
@@ -68,19 +69,22 @@ void update_score(struct player *players, int NUM_PLAYERS, char *name, int score
 }
 
 void display_results(struct player *players, int NUM_PLAYERS){
-    for (int i = 0; i < NUM_PLAYERS; i++)                     //Loop for ascending ordering
+
+    // Sort the results
+    for (int i = 0; i < NUM_PLAYERS; i++)
 	{
-		for (int j = 0; j < NUM_PLAYERS; j++)             //Loop for comparing other values
+		for (int j = 0; j < NUM_PLAYERS; j++)
 		{
-			if (players[j].score < players[i].score)                //Comparing other array elements
+			if (players[j].score < players[i].score)
 			{
-				struct player tmp = players[i];         //Using temporary variable for storing last value
-				players[i] = players[j];            //replacing value
-				players[j] = tmp;             //storing last value
+				struct player tmp = players[i];
+				players[i] = players[j];
+				players[j] = tmp;
 			}  
 		}
 	}
 
+    // Print all results
     int k = 0;
     while(k < NUM_PLAYERS){
         printf("%d: %s %d\n", k+1, players[k].name, players[k].score);
