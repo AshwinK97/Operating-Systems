@@ -105,8 +105,8 @@ int main(int argc, char *argv[])
         } while(!player_exists(players, NUM_PLAYERS, chosen_player));
         
         do {
-            printf("%s Choose your category and price!\n", chosen_player); 
-            printf("(Make sure to use a '-' as your delimiter)\n");
+            printf("\n%s choose your category and price!\n", chosen_player); 
+            printf("(Make sure to use a ' ' as your delimiter)\n");
 
             fgets(chosen_option, BUFFER_LEN, stdin);
             tokenized_chosen_option = tokenize(chosen_option);
@@ -114,8 +114,14 @@ int main(int argc, char *argv[])
         
         display_question(tokenized_chosen_option[0], atoi(tokenized_chosen_option[1]));
 
-        fgets(answer, BUFFER_LEN, stdin);
-        tokenized_answer = tokenize(answer);
+        do {
+            fgets(answer, BUFFER_LEN, stdin);
+            tokenized_answer = tokenize(answer);
+            if(tokenized_answer[2] == NULL){
+                printf("%s\n", "Format does not match! Try Again");
+                display_question(tokenized_chosen_option[0], atoi(tokenized_chosen_option[1]));
+            }
+        } while(tokenized_answer[2] == NULL);
 
         if (valid_answer(tokenized_chosen_option[0], atoi(tokenized_chosen_option[1]), tokenized_answer[2])) {
             printf("Correct!\n");
@@ -123,7 +129,8 @@ int main(int argc, char *argv[])
         } else {
             printf("Incorrect!\n");
         }
-
+        
+        sleep(2);
         turn++;
 
         // Display the final results and exit

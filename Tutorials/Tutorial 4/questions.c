@@ -19,10 +19,10 @@ void initialize_game(void)
         strcpy(questions[i].category, categories[i%3]);
         printf("%s\n", questions[i].category);
 
-        strcpy(questions[i].question, categories[i%3]); 
+        strcpy(questions[i].question, question_bank[i]); 
         printf("%s\n", questions[i].question);
 
-        strcpy(questions[i].answer, "Answer");
+        strcpy(questions[i].answer, answer_bank[i]);
         printf("%s\n", questions[i].answer);
         
         questions[i].value = ((i/3) * 100) + 100;
@@ -53,8 +53,8 @@ void display_question(char *category, int value)
     int i = 0;
     while(i < NUM_QUESTIONS){
         if(strcmp(&questions[i].category, category) == 0 && questions[i].value == value){
-            printf("%s-%d?\n", &questions[i].category, questions[i].value);
-            printf("%s\n", "What's your answer (who is or what is): ");
+            printf("\n%s-%d: %s\n", &questions[i].category, questions[i].value, &questions[i].question);
+            printf("%s\n", "What's your answer (who/what is/are): ");
         }
         i++;
     }

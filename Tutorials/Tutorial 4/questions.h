@@ -19,8 +19,38 @@
 // List of 3 categories as array of strings
 static char categories[NUM_CATEGORIES][MAX_LEN] = {
     "programming", 
-    "algorithms", 
-    "databases"
+    "os", 
+    "db"
+};
+
+static char answer_bank[NUM_QUESTIONS][MAX_LEN] = {
+    "fgets", 
+    "unix", 
+    "sql",
+    "echo",
+    "linux",
+    "join",
+    "bug",
+    "richie",
+    "drop",
+    "pong",
+    "distros",
+    "elephant"
+};
+
+static char question_bank[NUM_QUESTIONS][MAX_LEN] = {
+    "This function is used in C to get user input",
+    "This os is the foundation of macOS",
+    "This is the abbreviation of Structured Query Language",
+    "This command in bash is used to print a string",
+    "This micro kernal was developed by Linus Torvalds",
+    "This function is used in SQL to combine two tables",
+    "This is known as an error, flaw, failure, or fault in a computer program",
+    "This is the last name of the founding father of the C language",
+    "You can use this function to destroy anything in SQL",
+    "Released on 29 Nov. 1972, this was the first major commercial video game",
+    "These are known as variants of linux",
+    "It is the mascot of the Postgres language"
 };
 
 // Questions struct for each question
