@@ -9,7 +9,16 @@ Allows user to change directory
 ##### cd .. - This will return you to the parent directory
 ##### cd Documents - This will take you to the Document directory
 
-## exit
+## dir
+Displays all content in directory *<directory>*
+
+## clr
+
+## help
+
+## pause
+
+## quit
 Exits shell utility and will exit with status of last command
 ### Examples:
-##### exit - Exits shell and carries exit status of last command
+##### quit - Exits shell and carries exit status of last command
