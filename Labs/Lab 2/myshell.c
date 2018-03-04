@@ -20,6 +20,7 @@
 // Put global environment variables here
 
 const char PROMPT[] = ">>";
+char *wd;
 
 // Define functions declared in myshell.h here
 
@@ -42,7 +43,7 @@ int main(int argc, char *argv[]) {
     // Parse the commands provided using argc and argv
 	
 	printf("%s", PROMPT);
-
+	//printf("%s %s", getcwd(wd, sizeof(wd)), PROMPT);
     // Perform an infinite loop getting command input from users
     while (fgets(buffer, BUFFER_LEN, stdin) != NULL) {
 
@@ -52,7 +53,7 @@ int main(int argc, char *argv[]) {
 		token = strtok(buffer, " ");
 		strcpy(command, token);
 
-		// get arguments
+		// get arguments by tokenization
 		token = strtok(NULL, " "); // check if arguments exist
 		if (token != NULL) {
 			strcpy(arg, token);
@@ -73,10 +74,50 @@ int main(int argc, char *argv[]) {
 	
 		else if (strcmp(command, "cd") == 0) {
 			printf("you typed cd with arguments %s\n", arg);
+
+			if (strlen(arg) == 0) {
+                fprintf(stderr, "sh: expected argument to \"cd\"\n");
+            } else {
+                if (chdir(arg) != 0) {
+                    perror("sh");
+                }
+            }
         }
 
-        // quit command -- exit the shell
-		else if (strcmp(command, "exit") == 0) {
+		else if (strcmp(command, "dir") == 0) {
+			DIR *dir;
+            struct dirent *dp; 
+            
+			if (strlen(arg) == 0) {
+                fprintf(stderr, "sh: expected argument to \"dir\"\n");
+            } else {
+				dir = opendir(arg); 
+				
+				while((dp = readdir(dir))!=NULL)
+				{
+					printf("%s\t",dp->d_name);
+				}
+
+				printf("\n%s", " ");
+
+				closedir(dir);
+			}
+		}
+
+		else if (strcmp(command, "echo") == 0) {
+			if (strlen(arg) == 0) {
+                fprintf(stderr, "sh: expected argument to \"cd\"\n");
+            } else {
+				printf("%s\n", arg);
+			}
+		}
+
+		else if (strcmp(command, "environ") == 0) {
+			printf("%s", getcwd(wd, sizeof(wd)));
+		}
+
+        // quit command -- quit the shell
+		else if (strcmp(command, "quit") == 0) {
 			printf("Exiting shell\n");
             return EXIT_SUCCESS;
         }
@@ -88,6 +129,7 @@ int main(int argc, char *argv[]) {
 
 		// print prompt
 		printf("%s", PROMPT);
+		//printf("%s %s", getcwd(wd, sizeof(wd)), PROMPT);
     }
     return EXIT_SUCCESS;
 }
