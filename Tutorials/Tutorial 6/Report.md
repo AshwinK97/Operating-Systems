@@ -4,10 +4,10 @@
 *fork()* is a function that invokes a system call to duplicate the current process. This function takes no arguments and returns the process ID of the new process. The newly created process will be a child process of the process that duplicated itself. Once duplicated, both the parent and child processes will continue to execute the code below the fork instruction.
 
 ## 2. What is IPC? Describe methods of performing IPC?
-IPC (inter process communication) is is a mechanism which allows processes to communicate with each other and synchronize their actions. The two methods of using IPC are shared memory and message passing.
+IPC (inter process communication) is a mechanism which allows processes to communicate with each other and synchronize their actions. The two methods of using IPC are shared memory and message passing.
 
 ### Shared memory
-Two processes share a common space or memory location where one process produce and store data and another processes can consume it.
+Two processes share a common space or memory location where one process produce and store data and another processe can consume it.
 
 ### Message passing
 This method of communication does not require any kind of shared memory. Instead, two processes will establish a communication link and start exchanging messages using send() and recieve() primitives.
@@ -20,19 +20,19 @@ Wait and signal are atomic operations that are used to interact with the integer
 
 ## 5. Explain the functions in semaphore.h
 
-### int sem_init(sem_t \*sem, int pshared, unsigned int value);
+### int sem\_init(sem\_t \*sem, int pshared, unsigned int value);
 Initializes the semaphore referenced by *sem* with the initialized value of *value*.
 
-### int sem_destroy(sem_t \*sem);
+### int sem\_destroy(sem\_t \*sem);
 Destroys the semaphore referenced by *sem*, freeing it's resources. Only a semaphore initialized with sem_init can be destroyed with this function.
 
-### int sem_wait(sem_t \*sem);
+### int sem\_wait(sem\_t \*sem);
 Locks the semaphore referenced by *sem* by decrementing its value. If the semaphore value is currently zero, the calling thread will not return until it either locks the semaphore or is interupted by a signal.
 
-### int sem_post(sem_t \*sem);
+### int sem\_post(sem\_t \*sem);
 Unlocks the semaphore referenced by *sem* by incrementing its value. If the semaphore value is postive after this, then the next thread in line can lock the semaphore.
 
-### int sem_trywait(sem_t \*sem);
+### int sem\_trywait(sem\_t \*sem);
 Locks the semaphore referenced by *sem* only if it is currently unlocked, that is if the value is currently positive.
 
 # Application Questions
