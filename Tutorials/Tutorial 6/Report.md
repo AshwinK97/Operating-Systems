@@ -10,10 +10,12 @@ IPC (inter process communication) is is a mechanism which allows processes to co
 Two processes share a common space or memory location where one process produce and store data and another processes can consume it.
 
 ### Message passing
-This method of communication does not require any kind of shared memory. Instead, two processes will establish a communication link and start exchanging messages using send() and recieve primitives.
+This method of communication does not require any kind of shared memory. Instead, two processes will establish a communication link and start exchanging messages using send() and recieve() primitives.
 
 ## 3. Explain semaphores, how they work and how they differ from mutex?
-Semaphores
+Semaphores are a mechanism that allow n-number of threads to access a shared resource. They provide atomic operations, which are operations that cannot be interrupted, to control the access and modification of data. The main difference between semaphores and mutexes are that semaphores are signal based and allow multiple threads to access a critical section while mutexes only allow 1 thread at a time.
+
+## 4.
 
 # Application Questions
 All code and output can be found [here](https://github.com/AshwinK97/Operating-Systems/tree/master/Tutorials/Tutorial%206).
