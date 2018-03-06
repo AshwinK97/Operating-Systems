@@ -71,6 +71,13 @@ int main(int argc, char *argv[]) {
 		if (strcmp(command, "help") == 0) {
 			showHelp();
 		}
+		
+		else if (strcmp(command, "pause") == 0) {
+			char input[255];
+			printf("%s\n", "Paused: Press Enter to resume");
+			fgets(input,sizeof(input),stdin);
+  			while(input[0]!='\n'){}
+		}
 	
 		else if (strcmp(command, "cd") == 0) {
 			printf("you typed cd with arguments %s\n", arg);
@@ -83,6 +90,12 @@ int main(int argc, char *argv[]) {
                 }
             }
         }
+
+		else if (strcmp(command, "clr") == 0) {
+			int i;
+			for(i=0;i<50;i++)
+				printf("\n");
+		}
 
 		else if (strcmp(command, "dir") == 0) {
 			DIR *dir;
