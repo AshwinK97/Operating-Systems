@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <pthread.h>
 #include <semaphore.h>
+#include <time.h>
 
 #define NUMBERS 10
 #define BUFFERLEN 5
@@ -16,6 +17,7 @@ int buffer[BUFFERLEN] = {0, 0, 0, 0, 0};
 void *produce(void *arg) {
 	int *input = (int *)arg; // convert pointer arg to int array
 	int i, bufferindex;
+	srand(time(NULL));
 	
 	// loop through all numbers
 	for (i=0; i<NUMBERS; i++) {
@@ -28,6 +30,7 @@ void *produce(void *arg) {
 				sem_wait(&semaphore); // lock semaphore
 				
 				// produce number and place in buffer
+				sleep(rand() % 3 + 1); // wait for 1-3 seconds
 				buffer[bufferindex] = input[i];
 				printf("Produced %d\n", buffer[bufferindex]);
 				
@@ -46,6 +49,7 @@ void *produce(void *arg) {
 
 void *consume() {
 	int i, bufferindex;
+	srand(time(NULL));
 
 	// loop through all numbers
 	for (i=0; i<NUMBERS; i++) {
@@ -58,6 +62,7 @@ void *consume() {
 				sem_wait(&semaphore); // lock semaphore
 				
 				// consume number and free buffer
+				sleep(rand() % 3 + 1); // wait for 1-3 seconds
 				printf("Consumed %d\n", buffer[bufferindex]);
 				buffer[bufferindex] = 0;
 

@@ -9,15 +9,22 @@
 
 int main() {
 	pid_t pid1, pid2;
+	char buffer[20];
 
 	if ((pid1 = fork()) == 0) { // child 1
 		sleep(1);
-		printf("I am child 1\n");
+		FILE *fp = fopen(FILE1, "r");
+		fgets(buffer, 20, fp);
+		fclose(fp);
+		printf("%s\n", buffer);
 	} 
 	else {
 		if ((pid2 = fork()) == 0) { // child 2
 			sleep(1);
-			printf("I am child 2\n");
+			FILE *fp = fopen(FILE2, "r");
+			fgets(buffer, 20, fp);
+			fclose(fp);
+			printf("%s\n", buffer);
 		} 
 		else { // parent
 			FILE *fp1 = fopen(FILE1, "w");
