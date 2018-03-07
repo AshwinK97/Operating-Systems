@@ -35,10 +35,10 @@ void showHelp() {
 
 int main(int argc, char *argv[]) {
 
-    // Input buffer and and commands
-    char buffer[BUFFER_LEN] = { 0 };
-    char command[BUFFER_LEN] = { 0 };
-    char arg[BUFFER_LEN] = { 0 };
+	// Input buffer and and commands
+	char buffer[BUFFER_LEN] = { 0 };
+	char command[BUFFER_LEN] = { 0 };
+	char arg[BUFFER_LEN] = { 0 };
 	char* token;
 	
 	// TODO: need to parse command line input from argv[]
@@ -46,8 +46,8 @@ int main(int argc, char *argv[]) {
 	getcwd(CWD, sizeof(CWD)); // get working directory
 	printf("%s %s", CWD, PROMPT);
 
-    // Perform an infinite loop getting command input from users
-    while (fgets(buffer, BUFFER_LEN, stdin) != NULL) {
+	// Perform an infinite loop getting command input from users
+	while (fgets(buffer, BUFFER_LEN, stdin) != NULL) {
 
 		// remove newline characters
 		token = strtok(buffer, "\n");
@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
 			}
 		}
 
-        // COMAND IMPLEMENTATION
+		// COMAND IMPLEMENTATION
 
 		if (strcmp(command, "help") == 0) {
 			showHelp();
@@ -78,20 +78,23 @@ int main(int argc, char *argv[]) {
 			char input[255];
 			printf("%s\n", "Paused: Press Enter to resume");
 			fgets(input,sizeof(input),stdin);
-  			while(input[0]!='\n'){}
+			while(input[0]!='\n'){}
 		}
 	
 		else if (strcmp(command, "cd") == 0) {
 			printf("you typed cd with arguments %s\n", arg);
-
+			
+			// if no <directory> specified, stay in cwd
 			if (strlen(arg) == 0) {
-                fprintf(stderr, "sh: expected argument to \"cd\"\n");
-            } else {
-                if (chdir(arg) != 0) {
-                    perror("sh");
-                }
-            }
-        }
+				printf("no <directory> defined, remaining in current directory\n");
+			} else {
+				// change dir and display error if not found
+				if (chdir(arg) != 0)
+					perror("sh");
+				else
+					getcwd(CWD, sizeof(CWD));
+			}
+		}
 
 		else if (strcmp(command, "clr") == 0) {
 			int i;
@@ -101,11 +104,11 @@ int main(int argc, char *argv[]) {
 
 		else if (strcmp(command, "dir") == 0) {
 			DIR *dir;
-            struct dirent *dp; 
-            
+			struct dirent *dp; 
+			
 			if (strlen(arg) == 0) {
-                fprintf(stderr, "sh: expected argument to \"dir\"\n");
-            } else {
+				fprintf(stderr, "sh: expected argument to \"dir\"\n");
+			} else {
 				dir = opendir(arg); 
 				
 				while((dp = readdir(dir))!=NULL)
@@ -121,8 +124,8 @@ int main(int argc, char *argv[]) {
 
 		else if (strcmp(command, "echo") == 0) {
 			if (strlen(arg) == 0) {
-                fprintf(stderr, "sh: expected argument to \"cd\"\n");
-            } else {
+				fprintf(stderr, "sh: expected argument to \"cd\"\n");
+			} else {
 				printf("%s\n", arg);
 			}
 		}
@@ -132,18 +135,18 @@ int main(int argc, char *argv[]) {
 			printf(" SHELL: %s\n CWD: %s\n", SHELL, CWD);
 		}
 
-        // exit shell
+		// exit shell
 		else if (strcmp(command, "quit") == 0) {
 			printf("Exiting shell\n");
-            return EXIT_SUCCESS;
-        }
+			return EXIT_SUCCESS;
+		}
 
-        // Unsupported command
-        else {
-            fputs("Unsupported command, use help to display the manual\n", stderr);
-        }
+		// Unsupported command
+		else {
+			fputs("Unsupported command, use help to display the manual\n", stderr);
+		}
 
 		printf("%s %s", CWD, PROMPT); // print working directory + prompt
-    }
-    return EXIT_SUCCESS;
+	}
+	return EXIT_SUCCESS;
 }
