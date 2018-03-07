@@ -20,7 +20,7 @@
 // Put global environment variables here
 
 const char PROMPT[] = ">>";
-char *wd;
+char wd[1024];
 
 // Define functions declared in myshell.h here
 
@@ -39,11 +39,12 @@ int main(int argc, char *argv[]) {
     char command[BUFFER_LEN] = { 0 };
     char arg[BUFFER_LEN] = { 0 };
 	char* token;
-
-    // Parse the commands provided using argc and argv
 	
-	printf("%s", PROMPT);
-	//printf("%s %s", getcwd(wd, sizeof(wd)), PROMPT);
+	// need to parse command line input from argv[]
+
+	getcwd(wd, sizeof(wd)); // get working directory
+	printf("%s %s", wd, PROMPT);
+
     // Perform an infinite loop getting command input from users
     while (fgets(buffer, BUFFER_LEN, stdin) != NULL) {
 
@@ -140,9 +141,7 @@ int main(int argc, char *argv[]) {
             fputs("Unsupported command, use help to display the manual\n", stderr);
         }
 
-		// print prompt
-		printf("%s", PROMPT);
-		//printf("%s %s", getcwd(wd, sizeof(wd)), PROMPT);
+		printf("%s %s", wd, PROMPT); // print working directory + prompt
     }
     return EXIT_SUCCESS;
 }
