@@ -19,8 +19,9 @@
 
 // Put global environment variables here
 
+const char *SHELL = "Project-Shell v0.1";
 const char PROMPT[] = ">>";
-char wd[1024];
+char CWD[1024]; // will store the working directory
 
 // Define functions declared in myshell.h here
 
@@ -40,10 +41,10 @@ int main(int argc, char *argv[]) {
     char arg[BUFFER_LEN] = { 0 };
 	char* token;
 	
-	// need to parse command line input from argv[]
+	// TODO: need to parse command line input from argv[]
 
-	getcwd(wd, sizeof(wd)); // get working directory
-	printf("%s %s", wd, PROMPT);
+	getcwd(CWD, sizeof(CWD)); // get working directory
+	printf("%s %s", CWD, PROMPT);
 
     // Perform an infinite loop getting command input from users
     while (fgets(buffer, BUFFER_LEN, stdin) != NULL) {
@@ -126,11 +127,12 @@ int main(int argc, char *argv[]) {
 			}
 		}
 
+		// display environment variables
 		else if (strcmp(command, "environ") == 0) {
-			printf("%s", getcwd(wd, sizeof(wd)));
+			printf(" SHELL: %s\n CWD: %s\n", SHELL, CWD);
 		}
 
-        // quit command -- quit the shell
+        // exit shell
 		else if (strcmp(command, "quit") == 0) {
 			printf("Exiting shell\n");
             return EXIT_SUCCESS;
@@ -141,7 +143,7 @@ int main(int argc, char *argv[]) {
             fputs("Unsupported command, use help to display the manual\n", stderr);
         }
 
-		printf("%s %s", wd, PROMPT); // print working directory + prompt
+		printf("%s %s", CWD, PROMPT); // print working directory + prompt
     }
     return EXIT_SUCCESS;
 }

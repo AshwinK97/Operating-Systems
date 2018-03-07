@@ -1,7 +1,5 @@
 # Manual for Shell Utility
-
 ## Commands
-
 ## cd
 Allows user to change directory
 ### Examples:
@@ -11,10 +9,15 @@ Allows user to change directory
 
 ## dir
 Displays all content in directory *<directory>*
+##### dir ~ - displays contents of home directory
+##### dir - displays contents of current directory
+##### dir .. - displays contents of parent directory
 
 ## clr
+Clears the screen by printing 100 blank lines to stdout
 
 ## help
+Displays this help screen
 
 ## pause
 
