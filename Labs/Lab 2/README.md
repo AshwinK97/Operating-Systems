@@ -8,17 +8,17 @@ Does not support spaces in path names.
 ##### cd .. - This will return you to the parent directory
 ##### cd Documents - This will take you to the Document directory
 
-## dir
+## dir or ls
 Displays all content in specified directory
 Does not support spaces in path names..
 ##### dir ~ - displays contents of home directory
 ##### dir - displays contents of current directory
 ##### dir .. - displays contents of parent directory
 
-## environ
+## environ or env
 Displays all environment variables
 
-## clr
+## clr or cls
 Clears the screen by printing 100 blank lines to stdout
 
 ## help
@@ -27,5 +27,5 @@ Displays this help screen
 ## pause
 Pauses the shell, waits for user to press *<enter>*
 
-## quit
+## quit or exit
 Exits shell utility and will exit with status of last command

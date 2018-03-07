@@ -19,9 +19,8 @@
 #define SCREENBUFFER 100
 
 // Put global environment variables here
-
 const char *SHELL = "Project-Shell v0.1";
-const char PROMPT[] = ">>";
+const char *PROMPT = ">>";
 char CWD[1024];
 
 // Define functions declared in myshell.h here
@@ -80,8 +79,9 @@ int main(int argc, char *argv[]) {
 		else if (strcmp(command, "pause") == 0) {
 			char input[255];
 			printf("%s\n", "Paused: Press Enter to resume");
-			fgets(input,sizeof(input),stdin);
-			while(input[0]!='\n'){}
+			do {
+				fgets(input, sizeof(input), stdin);
+			} while(input[0] != '\n');
 		}
 		
 		// change directory
@@ -104,12 +104,13 @@ int main(int argc, char *argv[]) {
 		}
 		
 		// clear the screen
-		else if (strcmp(command, "clr") == 0) {
+		else if (strcmp(command, "clr") == 0 || strcmp(command, "cls") == 0) {
 			int i;
 			for(i=0; i<SCREENBUFFER; i++) printf("\n");
 		}
-
-		else if (strcmp(command, "dir") == 0) {
+		
+		// display contents of directory
+		else if (strcmp(command, "dir") == 0 || (strcmp(command, "ls")) == 0) {
 			DIR *dir;
 			struct dirent *dp; 
 			
@@ -138,7 +139,7 @@ int main(int argc, char *argv[]) {
 		}
 
 		// display environment variables
-		else if (strcmp(command, "environ") == 0) {
+		else if (strcmp(command, "environ") == 0 || (strcmp(command, "env")) == 0) {
 			printf(" SHELL: %s\n CWD: %s\n", SHELL, CWD);
 		}
 
