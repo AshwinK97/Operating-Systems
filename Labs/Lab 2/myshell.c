@@ -16,12 +16,13 @@
 
 // Put macros or constants here using #define
 #define BUFFER_LEN 256
+#define SCREENBUFFER 100
 
 // Put global environment variables here
 
 const char *SHELL = "Project-Shell v0.1";
 const char PROMPT[] = ">>";
-char CWD[1024]; // will store the working directory
+char CWD[1024];
 
 // Define functions declared in myshell.h here
 
@@ -69,57 +70,63 @@ int main(int argc, char *argv[]) {
 		}
 
 		// COMAND IMPLEMENTATION
-
+		
+		// display help
 		if (strcmp(command, "help") == 0) {
 			showHelp();
 		}
 		
+		// pause the shell
 		else if (strcmp(command, "pause") == 0) {
 			char input[255];
 			printf("%s\n", "Paused: Press Enter to resume");
 			fgets(input,sizeof(input),stdin);
 			while(input[0]!='\n'){}
 		}
-	
-		else if (strcmp(command, "cd") == 0) {
-			printf("you typed cd with arguments %s\n", arg);
-			
+		
+		// change directory
+		else if (strcmp(command, "cd") == 0) {	
 			// if no <directory> specified, stay in cwd
 			if (strlen(arg) == 0) {
 				printf("no <directory> defined, remaining in current directory\n");
-			} else {
-				// change dir and display error if not found
+			} 
+			
+			// if <directory> is specified, attempt to change dir
+			else {
+				// change dir, display error if not found
 				if (chdir(arg) != 0)
 					perror("sh");
+				
+				// if found, set new CWD
 				else
 					getcwd(CWD, sizeof(CWD));
 			}
 		}
-
+		
+		// clear the screen
 		else if (strcmp(command, "clr") == 0) {
 			int i;
-			for(i=0;i<50;i++)
-				printf("\n");
+			for(i=0; i<SCREENBUFFER; i++) printf("\n");
 		}
 
 		else if (strcmp(command, "dir") == 0) {
 			DIR *dir;
 			struct dirent *dp; 
 			
-			if (strlen(arg) == 0) {
-				fprintf(stderr, "sh: expected argument to \"dir\"\n");
-			} else {
-				dir = opendir(arg); 
-				
-				while((dp = readdir(dir))!=NULL)
-				{
-					printf("%s\t",dp->d_name);
-				}
+			// if no path specified, take CWD as <arg>
+			if (strlen(arg) == 0)
+				strcpy(arg, CWD);
+			
+			// open directory at parth <arg>
+			dir = opendir(arg); 
+			
+			// read each item and write to screen
+			while((dp = readdir(dir)) != NULL)
+				printf("%s\t", dp->d_name);
+			printf("\n");
 
-				printf("\n%s", " ");
-
-				closedir(dir);
-			}
+			// close directory
+			closedir(dir);
 		}
 
 		else if (strcmp(command, "echo") == 0) {
