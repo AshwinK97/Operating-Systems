@@ -128,13 +128,13 @@ int main(int argc, char *argv[]) {
 			// close directory
 			closedir(dir);
 		}
-
+		
+		// echo back comment
 		else if (strcmp(command, "echo") == 0) {
-			if (strlen(arg) == 0) {
-				fprintf(stderr, "sh: expected argument to \"cd\"\n");
-			} else {
-				printf("%s\n", arg);
-			}
+			// if no <comment> is specified, set arg to empty string
+			if (strlen(arg) == 0)
+				strcpy(arg, "");
+			printf("%s\n", arg);
 		}
 
 		// display environment variables
@@ -143,7 +143,7 @@ int main(int argc, char *argv[]) {
 		}
 
 		// exit shell
-		else if (strcmp(command, "quit") == 0) {
+		else if (strcmp(command, "quit") == 0 || (strcmp(command, "exit")) == 0) {
 			printf("Exiting shell\n");
 			return EXIT_SUCCESS;
 		}
