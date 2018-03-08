@@ -20,9 +20,9 @@
 
 // Put global environment variables here
 int PID;
-char SHELL[1024];
+char SHELL[BUFFER_LEN];
 const char *PROMPT = ">>";
-char CWD[1024];
+char CWD[BUFFER_LEN];
 
 // Define functions declared in myshell.h here
 
@@ -30,7 +30,7 @@ void showHelp() {
 	FILE *f = fopen("README.md", "r");
 	char row[255];
 	while (fgets(row, sizeof(row), f) != NULL)
-		puts(row);
+		printf("%s", row);
 	fclose(f);
 }
 
@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
 	readlink(linkpath, SHELL);
 	
 	// print initial prompt
-	printf("%s %s", CWD, PROMPT);
+	printf("%s%s ", CWD, PROMPT);
 
 	// Perform an infinite loop getting command input from users
 	while (fgets(buffer, BUFFER_LEN, stdin) != NULL) {
@@ -98,25 +98,26 @@ int main(int argc, char *argv[]) {
 		
 		// change directory
 		else if (strcmp(command, "cd") == 0) {	
-			// if no <directory> specified, stay in cwd
-			if (strlen(arg) == 0) {
-				printf("no <directory> defined, remaining in current directory\n");
-			} 
 			
-			// if <directory> is specified, attempt to change dir
-			else {
-				// change dir, display error if not found
-				if (chdir(arg) != 0)
-					perror("sh");
-				
-				// if found, set new CWD
-				else
-					getcwd(CWD, sizeof(CWD));
+			// if no <directory> specified, stay in cwd
+			if (strlen(arg) == 0)
+				strcpy(arg, CWD);
+			
+			printf("arg: %s\n", arg);
+			
+			// change dir, display error if not found
+			if (chdir(arg) != 0) {
+				perror("sh");
+				chdir(CWD);
 			}
+
+			// if found, set new CWD
+			else
+				getcwd(CWD, sizeof(CWD));
 		}
 		
 		// clear the screen
-		else if (strcmp(command, "clr") == 0 || strcmp(command, "cls") == 0) {
+		else if (strcmp(command, "clr") == 0 || strcmp(command, "clear") == 0) {
 			int i;
 			for(i=0; i<SCREENBUFFER; i++) printf("\n");
 		}
@@ -140,6 +141,7 @@ int main(int argc, char *argv[]) {
 
 			// close directory
 			closedir(dir);
+			free(dp);
 		}
 		
 		// echo back comment
@@ -152,7 +154,7 @@ int main(int argc, char *argv[]) {
 
 		// display environment variables
 		else if (strcmp(command, "environ") == 0 || (strcmp(command, "env")) == 0) {
-			printf(" SHELL: %s\n CWD: %s\n", SHELL, CWD);
+			printf(" PID: %d\n SHELL: %s\n CWD: %s\n", PID, SHELL, CWD);
 		}
 
 		// exit shell
@@ -166,7 +168,7 @@ int main(int argc, char *argv[]) {
 			fputs("Unsupported command, use help to display the manual\n", stderr);
 		}
 
-		printf("%s %s", CWD, PROMPT); // print working directory + prompt
+		printf("%s%s ", CWD, PROMPT); // print working directory + prompt
 	}
 	return EXIT_SUCCESS;
 }
