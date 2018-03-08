@@ -35,6 +35,9 @@ void showHelp() {
 }
 
 int main(int argc, char *argv[]) {
+	
+	// File pointer for batch file
+	FILE *bfp;
 
 	// Input buffer and and commands
 	char buffer[BUFFER_LEN] = { 0 };
@@ -54,12 +57,48 @@ int main(int argc, char *argv[]) {
 	char linkpath[50];
 	sprintf(linkpath, "/proc/%d/exe", PID);
 	readlink(linkpath, SHELL);
-	
-	// print initial prompt
-	printf("%s%s ", PWD, PROMPT);
+
+	// if batchfile was provided, setup file pointer
+	if (argc > 1) {
+		if ((bfp = fopen(argv[1], "r")) == 0) {
+			perror(argv[1]);
+			return EXIT_SUCCESS;
+		}
+	}
 
 	// Perform an infinite loop getting command input from users
-	while (fgets(buffer, BUFFER_LEN, stdin) != NULL) {
+	while (1) {
+		
+		// reset command buffers
+		buffer[0] = '\0';
+		command[0] = '\0';
+		arg[0] = '\0';
+		
+		// print prompt
+		printf("%s%s ", PWD, PROMPT);
+		
+		// if batchfile was provided, read it
+		if (argc > 1) {
+			// if read is unnsuccessful, exit
+			if (fgets(buffer, BUFFER_LEN, bfp) == NULL)
+				strcpy(buffer, "exit");
+			
+			// if read is successful
+			else {
+				// check for empty line
+				if (strlen(buffer) <= 1)
+					continue;
+
+				// display command and run it
+				printf("Running: %s\n", buffer);
+			}
+		}
+
+		// else get input from user, exit if input is null
+		else if (fgets(buffer, BUFFER_LEN, stdin) == NULL) {
+			printf("Exiting shell\n");
+			return EXIT_SUCCESS;
+		}
 
 		// remove newline characters
 		token = strtok(buffer, "\n");
@@ -168,14 +207,11 @@ int main(int argc, char *argv[]) {
 		else {
 			fputs("Unsupported command, use help to display the manual\n", stderr);
 		}
-		
-		// reset command buffers
-		buffer[0] = '\0';
-		command[0] = '\0';
-		arg[0] = '\0';
-		
-		// print prompt
-		printf("%s%s ", PWD, PROMPT);
 	}
+	
+	// if batchfile was provided, close it before exiting
+	if (argc > 1)
+		fclose(bfp);
+
 	return EXIT_SUCCESS;
 }
