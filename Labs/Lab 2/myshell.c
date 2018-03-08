@@ -22,7 +22,7 @@
 int PID;
 char SHELL[BUFFER_LEN];
 const char *PROMPT = ">>";
-char CWD[BUFFER_LEN];
+char PWD[BUFFER_LEN];
 
 // Define functions declared in myshell.h here
 
@@ -44,8 +44,8 @@ int main(int argc, char *argv[]) {
 	
 	// TODO: need to parse command line input from argv[]
 	
-	// set CWD
-	getcwd(CWD, sizeof(CWD));
+	// set PWD
+	getcwd(PWD, sizeof(PWD));
 	
 	// get PID
 	PID = getpid();
@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
 	readlink(linkpath, SHELL);
 	
 	// print initial prompt
-	printf("%s%s ", CWD, PROMPT);
+	printf("%s%s ", PWD, PROMPT);
 
 	// Perform an infinite loop getting command input from users
 	while (fgets(buffer, BUFFER_LEN, stdin) != NULL) {
@@ -99,17 +99,17 @@ int main(int argc, char *argv[]) {
 		// change directory
 		else if (strcmp(command, "cd") == 0) {	
 			
-			// if no <directory> specified, arg = CWD
+			// if no <directory> specified, arg = PWD
 			if (strlen(arg) == 0)
-				strcpy(arg, CWD);
+				strcpy(arg, PWD);
 			
 			// change dir, display error if not found
 			if (chdir(arg) != 0)
 				perror("sh");
 
-			// if found, set new CWD
+			// if found, set new PWD
 			else
-				getcwd(CWD, sizeof(CWD));
+				getcwd(PWD, sizeof(PWD));
 		}
 		
 		// clear the screen
@@ -123,9 +123,9 @@ int main(int argc, char *argv[]) {
 			DIR *dir;
 			struct dirent *dp; 
 
-			// if no path specified, take CWD as <arg>
+			// if no path specified, take PWD as <arg>
 			if (strlen(arg) == 0)
-				strcpy(arg, CWD);
+				strcpy(arg, PWD);
 			
 			// open directory at path <arg>
 			dir = opendir(arg); 
@@ -155,7 +155,7 @@ int main(int argc, char *argv[]) {
 
 		// display environment variables
 		else if (strcmp(command, "environ") == 0 || (strcmp(command, "env")) == 0) {
-			printf(" PID: %d\n SHELL: %s\n CWD: %s\n", PID, SHELL, CWD);
+			printf(" PID: %d\n SHELL: %s\n PWD: %s\n", PID, SHELL, PWD);
 		}
 
 		// exit shell
@@ -175,7 +175,7 @@ int main(int argc, char *argv[]) {
 		arg[0] = '\0';
 		
 		// print prompt
-		printf("%s%s ", CWD, PROMPT);
+		printf("%s%s ", PWD, PROMPT);
 	}
 	return EXIT_SUCCESS;
 }
