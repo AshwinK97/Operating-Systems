@@ -19,7 +19,8 @@
 #define SCREENBUFFER 100
 
 // Put global environment variables here
-const char *SHELL = "Project-Shell v0.1";
+int PID;
+char SHELL[1024];
 const char *PROMPT = ">>";
 char CWD[1024];
 
@@ -42,8 +43,19 @@ int main(int argc, char *argv[]) {
 	char* token;
 	
 	// TODO: need to parse command line input from argv[]
+	
+	// set CWD
+	getcwd(CWD, sizeof(CWD));
+	
+	// get PID
+	PID = getpid();
 
-	getcwd(CWD, sizeof(CWD)); // get working directory
+	// set SHELL to path in /prov/2636/exe
+	char linkpath[50];
+	sprintf(linkpath, "/proc/%d/exe", PID);
+	readlink(linkpath, SHELL);
+	
+	// print initial prompt
 	printf("%s %s", CWD, PROMPT);
 
 	// Perform an infinite loop getting command input from users
