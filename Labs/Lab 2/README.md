@@ -6,18 +6,18 @@
 Allows user to change directory to specified path
 Does not support spaces in path names.
 
-##### cd - This will keep you in the current directory
-##### cd .. - This will return you to the parent directory
-##### cd Documents - This will take you to the Document directory
+#### cd - This will keep you in the current directory
+#### cd .. - This will return you to the parent directory
+#### cd Documents - This will take you to the Document directory
 
 
 ## dir or ls
 Displays all content in specified directory
 Does not support spaces in path names..
 
-##### dir ~ - displays contents of home directory
-##### dir - displays contents of current directory
-##### dir .. - displays contents of parent directory
+#### dir \ - displays contents of root directory
+#### dir - displays contents of current directory
+#### dir .. - displays contents of parent directory
 
 
 ## environ or env
