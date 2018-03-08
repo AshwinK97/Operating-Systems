@@ -99,17 +99,13 @@ int main(int argc, char *argv[]) {
 		// change directory
 		else if (strcmp(command, "cd") == 0) {	
 			
-			// if no <directory> specified, stay in cwd
+			// if no <directory> specified, arg = CWD
 			if (strlen(arg) == 0)
 				strcpy(arg, CWD);
 			
-			printf("arg: %s\n", arg);
-			
 			// change dir, display error if not found
-			if (chdir(arg) != 0) {
+			if (chdir(arg) != 0)
 				perror("sh");
-				chdir(CWD);
-			}
 
 			// if found, set new CWD
 			else
@@ -126,22 +122,27 @@ int main(int argc, char *argv[]) {
 		else if (strcmp(command, "dir") == 0 || (strcmp(command, "ls")) == 0) {
 			DIR *dir;
 			struct dirent *dp; 
-			
+
 			// if no path specified, take CWD as <arg>
 			if (strlen(arg) == 0)
 				strcpy(arg, CWD);
 			
-			// open directory at parth <arg>
+			// open directory at path <arg>
 			dir = opendir(arg); 
 			
-			// read each item and write to screen
-			while((dp = readdir(dir)) != NULL)
-				printf("%s\t", dp->d_name);
-			printf("\n");
+			// if dir was not opened successfully
+			if (dir == NULL)
+				perror(arg);
+
+			else {
+				// read each item and write to screen
+				while((dp = readdir(dir)) != NULL)
+					printf("%s\t", dp->d_name);
+				printf("\n");
+			}
 
 			// close directory
 			closedir(dir);
-			free(dp);
 		}
 		
 		// echo back comment
@@ -167,8 +168,14 @@ int main(int argc, char *argv[]) {
 		else {
 			fputs("Unsupported command, use help to display the manual\n", stderr);
 		}
-
-		printf("%s%s ", CWD, PROMPT); // print working directory + prompt
+		
+		// reset command buffers
+		buffer[0] = '\0';
+		command[0] = '\0';
+		arg[0] = '\0';
+		
+		// print prompt
+		printf("%s%s ", CWD, PROMPT);
 	}
 	return EXIT_SUCCESS;
 }
