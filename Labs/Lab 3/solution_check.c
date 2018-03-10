@@ -25,10 +25,11 @@ void print_puzzle() {
 	}
 }
 
-void *read_puzzle() {
+void *read_puzzle(void *arg) {
+	char *filename = (char*)arg;
 	pthread_mutex_lock(&mutex); // lock mutex
 
-	(FILE *fp = fopen(argv[1], "r") == 0)
+	FILE *fp = fopen(filename, "r");
 	int i, j;
 	for (i=0; i<DIM; i++) {
 		for (j=0; j<DIM; j++)
@@ -105,7 +106,7 @@ void *box_check() {
 	pthread_exit(0);
 }
 
-int main() {
+int main(int argc, char* argv[]) {
 	pthread_t read_thread;    // read thread
 	pthread_t r_threads[DIM]; // row threads
 	pthread_t c_threads[DIM]; // col threads
@@ -118,7 +119,7 @@ int main() {
 	}
 
 	// create the read thread
-	if (pthread_create(&read_thread, NULL, &read_puzzle, NULL)) {
+	if (pthread_create(&read_thread, NULL, &read_puzzle, (void *)argv[1])) {
 		printf("failed to create read thread\n");
 		return -1;
 	}

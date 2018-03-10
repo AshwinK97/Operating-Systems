@@ -4,7 +4,7 @@
 This repository contains files for the shell utility project for lab 2. The shell will allow users to perform basic directory operations such as changing and listing directories. You can also run shell commands from a batch file.
 
 # Group members:
-Jasindan Rasalingam: 100584423  
+Jasindan Rasalingam: 100584595  
 Darron Singh: 100584624  
 Kaushal Patel: 100586212  
 Ashwin Kamalakannan: 100584423
