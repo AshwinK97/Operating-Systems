@@ -16,11 +16,13 @@
 
 // Put macros or constants here using #define
 #define BUFFER_LEN 256
+#define SCREENBUFFER 100
 
 // Put global environment variables here
-
-const char PROMPT[] = ">>";
-char *wd;
+int PID;
+char SHELL[BUFFER_LEN];
+const char *PROMPT = ">>";
+char PWD[BUFFER_LEN];
 
 // Define functions declared in myshell.h here
 
@@ -28,24 +30,75 @@ void showHelp() {
 	FILE *f = fopen("README.md", "r");
 	char row[255];
 	while (fgets(row, sizeof(row), f) != NULL)
-		puts(row);
+		printf("%s", row);
 	fclose(f);
 }
 
 int main(int argc, char *argv[]) {
-
-    // Input buffer and and commands
-    char buffer[BUFFER_LEN] = { 0 };
-    char command[BUFFER_LEN] = { 0 };
-    char arg[BUFFER_LEN] = { 0 };
-	char* token;
-
-    // Parse the commands provided using argc and argv
 	
-	printf("%s", PROMPT);
-	//printf("%s %s", getcwd(wd, sizeof(wd)), PROMPT);
-    // Perform an infinite loop getting command input from users
-    while (fgets(buffer, BUFFER_LEN, stdin) != NULL) {
+	// File pointer for batch file
+	FILE *bfp;
+
+	// Input buffer and and commands
+	char buffer[BUFFER_LEN] = { 0 };
+	char command[BUFFER_LEN] = { 0 };
+	char arg[BUFFER_LEN] = { 0 };
+	char* token;
+	
+	// TODO: need to parse command line input from argv[]
+	
+	// set PWD
+	getcwd(PWD, sizeof(PWD));
+	
+	// get PID
+	PID = getpid();
+
+	// set SHELL to path in /prov/2636/exe
+	char linkpath[50];
+	sprintf(linkpath, "/proc/%d/exe", PID);
+	readlink(linkpath, SHELL);
+
+	// if batchfile was provided, setup file pointer
+	if (argc > 1) {
+		if ((bfp = fopen(argv[1], "r")) == 0) {
+			perror(argv[1]);
+			return EXIT_SUCCESS;
+		}
+	}
+
+	// Perform an infinite loop getting command input from users
+	while (1) {
+		
+		// reset command buffers
+		buffer[0] = '\0';
+		command[0] = '\0';
+		arg[0] = '\0';
+		
+		// print prompt
+		printf("%s%s ", PWD, PROMPT);
+		
+		// if batchfile was provided, read it
+		if (argc > 1) {
+			// if read is unnsuccessful, exit
+			if (fgets(buffer, BUFFER_LEN, bfp) == NULL)
+				strcpy(buffer, "exit");
+			
+			// if read is successful
+			else {
+				// check for empty line
+				if (strlen(buffer) <= 1)
+					continue;
+
+				// display command and run it
+				printf("Running: %s\n", buffer);
+			}
+		}
+
+		// else get input from user, exit if input is null
+		else if (fgets(buffer, BUFFER_LEN, stdin) == NULL) {
+			printf("Exiting shell\n");
+			return EXIT_SUCCESS;
+		}
 
 		// remove newline characters
 		token = strtok(buffer, "\n");
@@ -66,83 +119,99 @@ int main(int argc, char *argv[]) {
 			}
 		}
 
-        // COMAND IMPLEMENTATION
-
+		// COMAND IMPLEMENTATION
+		
+		// display help
 		if (strcmp(command, "help") == 0) {
 			showHelp();
 		}
 		
+		// pause the shell
 		else if (strcmp(command, "pause") == 0) {
 			char input[255];
 			printf("%s\n", "Paused: Press Enter to resume");
-			fgets(input,sizeof(input),stdin);
-  			while(input[0]!='\n'){}
+			do {
+				fgets(input, sizeof(input), stdin);
+			} while(input[0] != '\n');
 		}
-	
-		else if (strcmp(command, "cd") == 0) {
-			printf("you typed cd with arguments %s\n", arg);
+		
+		// change directory
+		else if (strcmp(command, "cd") == 0) {	
+			
+			// if no <directory> specified, arg = PWD
+			if (strlen(arg) == 0)
+				strcpy(arg, PWD);
+			
+			// change dir, display error if not found
+			if (chdir(arg) != 0)
+				perror("sh");
 
-			if (strlen(arg) == 0) {
-                fprintf(stderr, "sh: expected argument to \"cd\"\n");
-            } else {
-                if (chdir(arg) != 0) {
-                    perror("sh");
-                }
-            }
-        }
-
-		else if (strcmp(command, "clr") == 0) {
+			// if found, set new PWD
+			else
+				getcwd(PWD, sizeof(PWD));
+		}
+		
+		// clear the screen
+		else if (strcmp(command, "clr") == 0 || strcmp(command, "clear") == 0) {
 			int i;
-			for(i=0;i<50;i++)
-				printf("\n");
+			for(i=0; i<SCREENBUFFER; i++) printf("\n");
 		}
-
-		else if (strcmp(command, "dir") == 0) {
+		
+		// display contents of directory
+		else if (strcmp(command, "dir") == 0 || (strcmp(command, "ls")) == 0) {
 			DIR *dir;
-            struct dirent *dp; 
-            
-			if (strlen(arg) == 0) {
-                fprintf(stderr, "sh: expected argument to \"dir\"\n");
-            } else {
-				dir = opendir(arg); 
-				
-				while((dp = readdir(dir))!=NULL)
-				{
-					printf("%s\t",dp->d_name);
-				}
+			struct dirent *dp; 
 
-				printf("\n%s", " ");
+			// if no path specified, take PWD as <arg>
+			if (strlen(arg) == 0)
+				strcpy(arg, PWD);
+			
+			// open directory at path <arg>
+			dir = opendir(arg); 
+			
+			// if dir was not opened successfully
+			if (dir == NULL)
+				perror(arg);
 
-				closedir(dir);
+			else {
+				// read each item and write to screen
+				while((dp = readdir(dir)) != NULL)
+					printf("%s\t", dp->d_name);
+				printf("\n");
 			}
-		}
 
+			// close directory
+			closedir(dir);
+		}
+		
+		// echo back comment
 		else if (strcmp(command, "echo") == 0) {
-			if (strlen(arg) == 0) {
-                fprintf(stderr, "sh: expected argument to \"cd\"\n");
-            } else {
-				printf("%s\n", arg);
-			}
+			// if no <comment> is specified, set arg to empty string
+			if (strlen(arg) == 0)
+				strcpy(arg, "");
+			printf("%s\n", arg);
 		}
 
-		else if (strcmp(command, "environ") == 0) {
-			printf("%s", getcwd(wd, sizeof(wd)));
+		// display environment variables
+		else if (strcmp(command, "environ") == 0 || (strcmp(command, "env")) == 0) {
+			printf(" PID: %d\n SHELL: %s\n PWD: %s\n", PID, SHELL, PWD);
 		}
 
-        // quit command -- quit the shell
-		else if (strcmp(command, "quit") == 0) {
+		// exit shell
+		else if (strcmp(command, "quit") == 0 || (strcmp(command, "exit")) == 0) {
 			printf("Exiting shell\n");
-            return EXIT_SUCCESS;
-        }
+			return EXIT_SUCCESS;
+		}
 
-        // Unsupported command
-        else {
-            fputs("Unsupported command, use help to display the manual\n", stderr);
-        }
+		// Unsupported command
+		else {
+			fputs("Unsupported command, use help to display the manual\n", stderr);
+		}
+	}
+	
+	// if batchfile was provided, close it before exiting
+	if (argc > 1)
+		fclose(bfp);
 
-		// print prompt
-		printf("%s", PROMPT);
-		//printf("%s %s", getcwd(wd, sizeof(wd)), PROMPT);
-    }
-    return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }
