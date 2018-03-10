@@ -35,7 +35,7 @@ void showHelp() {
 }
 
 int main(int argc, char *argv[]) {
-	
+
 	// File pointer for batch file
 	FILE *bfp;
 
@@ -44,19 +44,19 @@ int main(int argc, char *argv[]) {
 	char command[BUFFER_LEN] = { 0 };
 	char arg[BUFFER_LEN] = { 0 };
 	char* token;
-	
+
 	// TODO: need to parse command line input from argv[]
-	
+
 	// set PWD
 	getcwd(PWD, sizeof(PWD));
-	
+
 	// get PID
 	PID = getpid();
 
 	// set SHELL to path in /prov/2636/exe
 	char linkpath[50];
 	sprintf(linkpath, "/proc/%d/exe", PID);
-	readlink(linkpath, SHELL);
+	readlink(linkpath, SHELL, BUFFER_LEN);
 
 	// if batchfile was provided, setup file pointer
 	if (argc > 1) {
@@ -68,21 +68,21 @@ int main(int argc, char *argv[]) {
 
 	// Perform an infinite loop getting command input from users
 	while (1) {
-		
+
 		// reset command buffers
 		buffer[0] = '\0';
 		command[0] = '\0';
 		arg[0] = '\0';
-		
+
 		// print prompt
 		printf("%s%s ", PWD, PROMPT);
-		
+
 		// if batchfile was provided, read it
 		if (argc > 1) {
 			// if read is unnsuccessful, exit
 			if (fgets(buffer, BUFFER_LEN, bfp) == NULL)
 				strcpy(buffer, "exit");
-			
+
 			// if read is successful
 			else {
 				// check for empty line
@@ -120,12 +120,12 @@ int main(int argc, char *argv[]) {
 		}
 
 		// COMAND IMPLEMENTATION
-		
+
 		// display help
 		if (strcmp(command, "help") == 0) {
 			showHelp();
 		}
-		
+
 		// pause the shell
 		else if (strcmp(command, "pause") == 0) {
 			char input[255];
@@ -134,14 +134,14 @@ int main(int argc, char *argv[]) {
 				fgets(input, sizeof(input), stdin);
 			} while(input[0] != '\n');
 		}
-		
+
 		// change directory
-		else if (strcmp(command, "cd") == 0) {	
-			
+		else if (strcmp(command, "cd") == 0) {
+
 			// if no <directory> specified, arg = PWD
 			if (strlen(arg) == 0)
 				strcpy(arg, PWD);
-			
+
 			// change dir, display error if not found
 			if (chdir(arg) != 0)
 				perror("sh");
@@ -150,25 +150,25 @@ int main(int argc, char *argv[]) {
 			else
 				getcwd(PWD, sizeof(PWD));
 		}
-		
+
 		// clear the screen
 		else if (strcmp(command, "clr") == 0 || strcmp(command, "clear") == 0) {
 			int i;
 			for(i=0; i<SCREENBUFFER; i++) printf("\n");
 		}
-		
+
 		// display contents of directory
 		else if (strcmp(command, "dir") == 0 || (strcmp(command, "ls")) == 0) {
 			DIR *dir;
-			struct dirent *dp; 
+			struct dirent *dp;
 
 			// if no path specified, take PWD as <arg>
 			if (strlen(arg) == 0)
 				strcpy(arg, PWD);
-			
+
 			// open directory at path <arg>
-			dir = opendir(arg); 
-			
+			dir = opendir(arg);
+
 			// if dir was not opened successfully
 			if (dir == NULL)
 				perror(arg);
@@ -183,7 +183,7 @@ int main(int argc, char *argv[]) {
 			// close directory
 			closedir(dir);
 		}
-		
+
 		// echo back comment
 		else if (strcmp(command, "echo") == 0) {
 			// if no <comment> is specified, set arg to empty string
@@ -208,7 +208,7 @@ int main(int argc, char *argv[]) {
 			fputs("Unsupported command, use help to display the manual\n", stderr);
 		}
 	}
-	
+
 	// if batchfile was provided, close it before exiting
 	if (argc > 1)
 		fclose(bfp);
