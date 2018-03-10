@@ -8,7 +8,6 @@
 // constants
 #define DIM 9
 #define TOTAL 45
-#define INFILE "solution.txt"
 
 // mutex
 pthread_mutex_t mutex;
@@ -17,10 +16,19 @@ pthread_mutex_t mutex;
 int puzzle[DIM][DIM];
 int valid = 1;
 
+void print_puzzle() {
+	int i, j;
+	for (i=0; i<DIM; i++) {
+		for (j=0; j<DIM; j++)
+			printf("%d ", puzzle[i][j]);
+		printf("\n");
+	}
+}
+
 void *read_puzzle() {
 	pthread_mutex_lock(&mutex); // lock mutex
 
-	FILE *fp = fopen(INFILE, "r");
+	(FILE *fp = fopen(argv[1], "r") == 0)
 	int i, j;
 	for (i=0; i<DIM; i++) {
 		for (j=0; j<DIM; j++)
@@ -28,7 +36,6 @@ void *read_puzzle() {
 	}
 
 	pthread_mutex_unlock(&mutex); // unlock mutex
-
 	return NULL;
 }
 
@@ -37,10 +44,13 @@ void *row_check(void *arg) {
 	int sum = 0;
 
 	for (i=0; i<DIM; i++) {
+		if (valid == 0) {
+			pthread_exit(0);
+		}
 		sum += puzzle[row][i];
 	}
 	if (sum != TOTAL) {
-		printf("Solution not valid\n");
+		printf("Row not valid: %d\n", row);
 		pthread_mutex_lock(&mutex); // lock mutex
 		if (valid == 1)
 			valid = 0;
@@ -54,11 +64,13 @@ void *col_check(void *arg) {
 	int sum = 0;
 
 	for (i=0; i<DIM; i++) {
+		if (valid == 0) {
+			pthread_exit(0);
+		}
 		sum += puzzle[i][col];
 	}
-
 	if (sum != TOTAL){
-		printf("Solution not valid\n");
+		printf("Column not valid: %d\n", col);
 		pthread_mutex_lock(&mutex);
 		if (valid == 1)
 			valid = 0;
@@ -67,44 +79,37 @@ void *col_check(void *arg) {
 	pthread_exit(0);
 }
 
-void *box_check(void *arg) {
-	int box = *((int*)arg); // convert pointer to int
-	int sum = 0;
+void *box_check() {
+	int row, col, sum;
 
-	int row = (int)(ceil(box - 3)) * 3;
-	int col = (int)((box - 1) % 3) * 3;
+	for (row=1; row<=DIM; row+=3) {
+		for (col=1; col<=DIM; col+=3) {
+			if (valid == 0) {
+				pthread_exit(0);
+			}
 
-	for (; row<row+3; row++) {
-		for (; col<col+3; col++) {
-			sum += puzzle[row][col];
+			sum = 0;
+			sum += puzzle[row-1][col-1] + puzzle[row-1][col] + puzzle[row-1][col+1];
+			sum += puzzle[row][col-1] + puzzle[row][col] + puzzle[row][col+1];
+			sum += puzzle[row+1][col-1] + puzzle[row+1][col] + puzzle[row+1][col+1];
+
+			if (sum != TOTAL){
+				printf("Block (%d, %d) not valid\n", row-1, col-1);
+				pthread_mutex_lock(&mutex);
+				if (valid == 1)
+					valid = 0;
+				pthread_mutex_unlock(&mutex);
+			}
 		}
 	}
-
-	if (sum != TOTAL){
-		printf("Solution not valid\n");
-		pthread_mutex_lock(&mutex);
-		if (valid == 1)
-			valid = 0;
-		pthread_mutex_unlock(&mutex);
-	}
 	pthread_exit(0);
-}
-
-void print_puzzle() {
-	int i, j;
-	for (i=0; i<DIM; i++) {
-		for (j=0; j<DIM; j++)
-			printf("%d ", puzzle[i][j]);
-		printf("\n");
-	}
 }
 
 int main() {
-	pthread_t read_thread;
+	pthread_t read_thread;    // read thread
 	pthread_t r_threads[DIM]; // row threads
 	pthread_t c_threads[DIM]; // col threads
-	pthread_t b_threads[DIM]; // box threads
-	int i;
+	pthread_t b_thread;       // box thread
 
 	// initialize mutex and barrier
 	if (pthread_mutex_init(&mutex, NULL)) {
@@ -125,51 +130,62 @@ int main() {
 	}
 
 	// create the row threads
-	// for (i=0; i<DIM; i++) {
-	// 	if (pthread_create(&r_threads[i], NULL, &row_check, &i)) {
-	// 		printf("failed to create row thread %d\n", i);
-	// 		return -1;
-	// 	}
-	// }
-	//
-	// // create the col threads
-	// for (i=0; i<DIM; i++) {
-	// 	if (pthread_create(&c_threads[i], NULL, &col_check, &i)) {
-	// 		printf("failed to create col thread %d\n", i);
-	// 		return -1;
-	// 	}
-	// }
-
-	// create the box threads
-	for (i=0; i<DIM; i++) {
-		if (pthread_create(&b_threads[i], NULL, &box_check, &i)) {
-			printf("failed to create row thread %d\n", i);
+	int ri;
+	for (ri=0; ri<DIM; ri++) {
+		int rtemp = ri;
+		if (pthread_create(&r_threads[ri], NULL, &row_check, &rtemp)) {
+			printf("failed to create row thread %d\n", rtemp);
 			return -1;
 		}
 	}
 
-	// wait for check threads to exit before terminating
-	// for (i=0; i<DIM; i++) {
-	// 	if (pthread_join(r_threads[i], NULL)) {
-	// 		printf("failed to join row thread %d\n", i);
-	// 		return -1;
-	// 	}
-	// }
-	// for (i=0; i<DIM; i++) {
-	// 	if (pthread_join(c_threads[i], NULL)) {
-	// 		printf("failed to join col thread %d\n", i);
-	// 		return -1;
-	// 	}
-	// }
-	for (i=0; i<DIM; i++) {
-		if (pthread_join(b_threads[i], NULL)) {
-			printf("failed to join box thread %d\n", i);
+	// create the col threads
+	int ci;
+	for (ci=0; ci<DIM; ci++) {
+		int ctemp = ci;
+		if (pthread_create(&c_threads[ci], NULL, &col_check, &ctemp)) {
+			printf("failed to create col thread %d\n", ctemp);
 			return -1;
 		}
+	}
+
+	// create the box thread
+	if (pthread_create(&b_thread, NULL, &box_check, NULL)) {
+		printf("failed to create row thread \n");
+		return -1;
+	}
+
+	// wait for check threads to exit before terminating
+	int rj;
+	for (rj=0; rj<DIM; rj++) {
+		if (pthread_join(r_threads[rj], NULL)) {
+			printf("failed to join row thread %d\n", rj);
+			return -1;
+		}
+	}
+
+	int cj;
+	for (cj=0; cj<DIM; cj++) {
+		if (pthread_join(c_threads[cj], NULL)) {
+			printf("failed to join col thread %d\n", cj);
+			return -1;
+		}
+	}
+
+
+	if (pthread_join(b_thread, NULL)) {
+		printf("failed to join box thread\n");
+		return -1;
 	}
 
 	// free resources
 	pthread_mutex_destroy(&mutex);
+
+	if (valid == 1) {
+		printf("%s\n", "Solution is valid\n");
+	} else {
+		printf("%s\n", "Solution is invalid\n");
+	}
 
 	return 0;
 }
