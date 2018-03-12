@@ -181,14 +181,13 @@ int main(void) {
 	int status;
 
 	pid_t pid;
-	pid = fork();
-	printf("%d\n", pid);
 
 	while(current->next != NULL){
 		struct proc* process = &current->process;
 		if(process->priority == 0){
 			delete_name(&head, process->name);
-
+			pid = fork();
+			
 			if(pid == 0){
 				process->pid = execvp(process->name, NULL);
 			} else if(pid < 0){
