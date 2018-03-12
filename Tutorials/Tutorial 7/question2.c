@@ -51,6 +51,16 @@ struct proc* pop(struct queue** head){
 	return process_popped;
 }
 
+struct proc* delete_name(struct queue* head, char* name){
+	struct proc* process = NULL;
+	struct queue* new_node = NULL;
+	struct queue* current = head;
+
+	
+
+	return process;
+}
+
 void print_process(struct proc *print_process) {
 	struct proc* process = print_process;
 
