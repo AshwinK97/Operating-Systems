@@ -17,14 +17,20 @@ int main(void){
 
   if(pid == 0){
     execvp("./process", NULL);
+  } else if(pid < 0){
+    status = -1;
+  } else {
+    sleep(5);
+    kill(pid, SIGSTOP);
+    sleep(10);
+    kill(pid, SIGCONT);
+
+    if(waitpid(pid, &status, 0) != pid){
+      status = -1;
+    }
+
+    printf("%d\n", status);
   }
-
-  sleep(5);
-  kill(pid, SIGSTOP);
-  sleep(10);
-  kill(pid, SIGCONT);
-
-  waitpid(pid, &status, NULL);
 
   return 0;
 }

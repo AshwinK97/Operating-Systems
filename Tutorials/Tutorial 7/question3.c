@@ -9,13 +9,16 @@
 
 int main(void){
   pid_t pid = fork();
+  int status;
 
   if (pid == 0){
     execvp("./process", NULL);
+  } else if(pid < 0){
+    status = -1;
+  } else {
+    sleep(5);
+    kill(pid, SIGINT);
   }
-
-  sleep(5);
-  kill(pid, SIGINT);
 
   return 0;
 }
