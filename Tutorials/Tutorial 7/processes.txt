@@ -5,6 +5,6 @@ emacs, 3, 11993, 1
 chrome, 1, 11996, 2
 chrome, 1, 11997, 3
 chrome, 1, 11998, 1
-gedit, 2, 1223, 4
+gedit, 2, 12235, 4
 eclipse, 2, 14442, 2
 clang, 1, 9223, 3

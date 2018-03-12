@@ -22,6 +22,26 @@ struct queue {
 	struct queue *next;
 };
 
+void print_process(struct proc *print_process) {
+	struct proc* process = print_process;
+
+	printf("Name: %s\n", process->name);
+	printf("pid: %d\n", process->pid);
+	printf("priority: %d\n", process->priority);
+	printf("runtime: %d\n", process->runtime);
+	printf("%s\n\n", "-----------------");
+}
+
+void print_list(struct queue *head) {
+	struct queue* current = head;
+
+	while(current->next != NULL) {
+		struct proc process = current->process;
+		print_process(&process);
+		current = current->next;
+	}
+}
+
 void push(struct queue *head, struct proc new_process) {
 	struct queue *current = head;
 	struct proc process = new_process;
@@ -51,34 +71,70 @@ struct proc* pop(struct queue** head){
 	return process_popped;
 }
 
-struct proc* delete_name(struct queue* head, char* name){
+struct proc* pop_n(struct queue** head, int n){
+	struct queue* current = *head;
 	struct proc* process = NULL;
-	struct queue* new_node = NULL;
-	struct queue* current = head;
+	int index = n;
+	int i = 0;
 
-	
+	if(n == 0){
+		return pop(head);
+	}
+
+	for(i = 0; i < index; i++){
+		if(current->next->next == NULL){
+			process = &current->next->process;
+			current->next = NULL;
+			
+			return process;
+		}
+		current = current->next;
+	}
+
+	current->next = current->next->next;
+	process = &current->process;
 
 	return process;
 }
 
-void print_process(struct proc *print_process) {
-	struct proc* process = print_process;
+struct proc* delete_name(struct queue** head, char* name){
+	struct proc* process = NULL;
+	struct queue* current = *head;
+	int index = 0;
 
-	printf("Name: %s\n", process->name);
-	printf("pid: %d\n", process->pid);
-	printf("priority: %d\n", process->priority);
-	printf("runtime: %d\n", process->runtime);
-	printf("%s\n\n", "-----------------");
+	while(current != NULL) {
+		process = &current->process;
+
+		if(strcmp(process->name, name) == 0){
+			return pop_n(head, index);
+		}
+
+		current = current->next;
+		index++;
+	}
+
+	process = NULL;
+	return process;
 }
 
-void print_list(struct queue *head) {
-	struct queue* current = head;
+struct proc* delete_pid(struct queue** head, int pid){
+	struct proc* process = NULL;
+	struct queue* current = *head;
+	int index = 0;
 
-	while(current->next != NULL) {
-		struct proc process = current->process;
-		print_process(&process);
+	while(current != NULL) {
+		process = &current->process;
+
+		if(process->pid == pid){
+			return pop_n(head, index);
+		}
+
 		current = current->next;
+		index++;
 	}
+
+	process = NULL;
+	return process;
 }
 
 void read_file(struct queue *head) {
@@ -119,9 +175,11 @@ int main(void) {
 	head->next = NULL;
 
 	read_file(head);
-	print_list(head);
-	printf("%s\n%s\n%s\n\n", "-----------", "Test pop()", "-----------");
-	print_process(pop(&head));
+	print_process(delete_name(&head, "emacs"));
+	print_process(delete_pid(&head, 12235));
 
+	while(head->next != NULL)
+		print_process(pop(&head->next));
+		
 	return 0;
 }
