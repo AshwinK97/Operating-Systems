@@ -1,3 +1,5 @@
+#define _POSIX_SOURCE
+
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -8,14 +10,21 @@
 #include <sys/wait.h>
 
 int main(void){
-  pid_t pid = fork();
+  int status;
+  pid_t pid;
 
-  if (pid == 0){
+  pid = fork();
+
+  if(pid == 0){
     execvp("./process", NULL);
   }
 
   sleep(5);
-  kill(pid, SIGINT);
+  kill(pid, SIGSTOP);
+  sleep(10);
+  kill(pid, SIGCONT);
+
+  waitpid(pid, &status, NULL);
 
   return 0;
 }

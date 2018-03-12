@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
     rc = setpriority(PRIO_PROCESS, 0, 20); // be nice, lower priority by 20 	
     cycle = argc < 2 ? DEFAULT_TIME : atoi(argv[1]);  // get tick count 
     if (cycle <= 0) cycle = 1;
-
+    printf("cycle: %d\n", cycle);
     for (i = 0; i < cycle;) {          // tick 
 
         if (signal_SIGCONT) {
