@@ -6,6 +6,7 @@
 #include <signal.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <string.h>
 
 #define INFILE "processes_tree.txt"
 
@@ -28,10 +29,17 @@ struct proc_tree *addNode(struct proc *node, struct proc_tree *tree){
     tree->data = *node;
   } else {
     struct proc *current_node = &tree->data;
-    char* current_parent = current_node->parent;
-
+    char* current_name = current_node->name;
+    
     // Make a recursive system to add nodes based on parent
     // data in current node and new node
+
+    int direction = strcmp(current_name, node->parent);
+    if(direction <= 0){
+      addNode(node, tree->left);
+    } else {
+      addNode(node, tree->right);
+    }
   }
 
   return tree;
@@ -51,18 +59,22 @@ void read_file(struct proc_tree *tree) {
 		// get parent
 		token = strtok(NULL, ",");
 		strcpy(node->parent, token);
+    printf("%s\n", token);
 
 		// get name
 		token = strtok(line, ",");
 		strcpy(node->name, token);
+    printf("%s\n", token);
 		
 		// get priority
 		token = strtok(NULL, ",");
 		sscanf(token, "%d", &node->priority);
+    printf("%s\n", token);
 
 		// get runtime
 		token = strtok(NULL, "\n");
 		sscanf(token, "%d", &node->memory);
+    printf("%s\n", token);
 		
 		// add to binary tree
     addNode(node, tree);
@@ -72,7 +84,8 @@ void read_file(struct proc_tree *tree) {
 int main(void)
 {
   struct proc_tree *tree;
-
+  tree = NULL;
+  read_file(tree);
 
   return 0;
 }
