@@ -57,24 +57,20 @@ void read_file(struct proc_tree *tree) {
 		node = malloc(sizeof(struct proc));
 
 		// get parent
-		token = strtok(NULL, ",");
+		token = strtok(line, ",");
 		strcpy(node->parent, token);
-    printf("%s\n", token);
 
 		// get name
 		token = strtok(line, ",");
 		strcpy(node->name, token);
-    printf("%s\n", token);
 		
 		// get priority
 		token = strtok(NULL, ",");
 		sscanf(token, "%d", &node->priority);
-    printf("%s\n", token);
 
-		// get runtime
+		// get memory
 		token = strtok(NULL, "\n");
 		sscanf(token, "%d", &node->memory);
-    printf("%s\n", token);
 		
 		// add to binary tree
     addNode(node, tree);
