@@ -9,14 +9,13 @@ double expensive(int num)
     return sin(num);
 }
 
-int main (int argc, char *argv[])
+int main ()
 {
     double x = 0; // Used in the summation
-    int thread_num, nthreads = 16;
+    int nthreads = 16;
     #ifdef _OPENMP
     omp_set_num_threads(nthreads);
     #endif
-    printf("Testing OpenMP, you should see each thread print...\n");
     #pragma omp parallel for reduction(+: x)
     for (int i = 0; i < 100; ++i)
     {

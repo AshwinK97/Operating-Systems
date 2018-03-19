@@ -9,7 +9,7 @@ double expensive(int num)
     return exp(num);
 }
 
-int main (int argc, char *argv[])
+int main ()
 {
     double x = 0; // Watch out for race conditions!
     int thread_num, nthreads = 16;
