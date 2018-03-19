@@ -23,7 +23,28 @@ struct proc_tree {
   struct proc_tree *right;
 };
 
-struct proc_tree *addNode(struct proc *node, struct proc_tree *tree){
+void print_node(struct proc *node){
+  printf("%s\n", "----------------");
+  printf("Parent: %s\n", node->parent);
+  printf("Name: %s\n", node->name);
+  printf("Priority: %d\n", node->priority);
+  printf("Memory: %d\n", node->memory);
+  printf("%s\n", "----------------");
+  printf("\n");
+}
+
+void print_tree(struct proc_tree *tree){
+  if(tree != NULL){
+    struct proc *node = &tree->data;
+    
+    print_node(node);
+    
+    print_tree(tree->left);
+    print_tree(tree->right);
+  }
+}
+
+void *addNode(struct proc *node, struct proc_tree *tree){
   if (tree == NULL){
     tree = malloc(sizeof(struct proc_tree));
     tree->data = *node;
@@ -41,23 +62,6 @@ struct proc_tree *addNode(struct proc *node, struct proc_tree *tree){
       addNode(node, tree->right);
     }
   }
-
-  return tree;
-}
-
-void print_node(struct proc *node){
-  printf("%s\n", "----------------");
-  printf("Parent: %s\n", node->parent);
-  printf("Name: %s\n", node->name);
-  printf("Priority: %d\n", node->priority);
-  printf("Memory: %d\n", node->memory);
-  printf("%s\n", "----------------");
-  printf("\n");
-}
-
-void print_tree(struct proc_tree *tree){
-  struct proc *node = &tree->data;
-  print_node(node);
 }
 
 void read_file(struct proc_tree *tree) {
@@ -91,12 +95,12 @@ void read_file(struct proc_tree *tree) {
 	}
 }
 
-int main(void)
-{
+int main(){
   struct proc_tree *tree;
   tree = NULL;
   read_file(tree);
+  print_node(&tree->data);
   print_tree(tree);
-
+  
   return 0;
 }
