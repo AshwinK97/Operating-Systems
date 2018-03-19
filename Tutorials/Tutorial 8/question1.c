@@ -45,6 +45,21 @@ struct proc_tree *addNode(struct proc *node, struct proc_tree *tree){
   return tree;
 }
 
+void print_node(struct proc *node){
+  printf("%s\n", "----------------");
+  printf("Parent: %s\n", node->parent);
+  printf("Name: %s\n", node->name);
+  printf("Priority: %d\n", node->priority);
+  printf("Memory: %d\n", node->memory);
+  printf("%s\n", "----------------");
+  printf("\n");
+}
+
+void print_tree(struct proc_tree *tree){
+  struct proc *node = &tree->data;
+  print_node(node);
+}
+
 void read_file(struct proc_tree *tree) {
 	FILE *fp = fopen(INFILE, "r");
 	char line[255];
@@ -52,7 +67,6 @@ void read_file(struct proc_tree *tree) {
 	struct proc *node;
 
 	while(fgets(line, sizeof(line), fp) != NULL) {	
-
 		// allocate new proc struct
 		node = malloc(sizeof(struct proc));
 
@@ -61,14 +75,14 @@ void read_file(struct proc_tree *tree) {
 		strcpy(node->parent, token);
 
 		// get name
-		token = strtok(line, ",");
+		token = strtok(NULL, ",");
 		strcpy(node->name, token);
 		
 		// get priority
 		token = strtok(NULL, ",");
 		sscanf(token, "%d", &node->priority);
 
-		// get memory
+		// get runtime
 		token = strtok(NULL, "\n");
 		sscanf(token, "%d", &node->memory);
 		
@@ -82,6 +96,7 @@ int main(void)
   struct proc_tree *tree;
   tree = NULL;
   read_file(tree);
+  print_tree(tree);
 
   return 0;
 }
