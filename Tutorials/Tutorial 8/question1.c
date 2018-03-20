@@ -23,7 +23,7 @@ struct proc_tree {
 	struct proc_tree *right;
 };
 
-void print_node(struct proc *node){
+void print_node(struct proc *node) {
 	printf("%s\n", "----------------");
 	printf("Parent: %s\n", node->parent);
 	printf("Name: %s\n", node->name);
@@ -33,35 +33,34 @@ void print_node(struct proc *node){
 	printf("\n");
 }
 
-void print_tree(struct proc_tree *tree){
+void print_tree(struct proc_tree *tree) {
 	if(tree != NULL){
 		struct proc *node = &tree->data;
-		
 		print_node(node);
-		
 		print_tree(tree->left);
 		print_tree(tree->right);
 	}
 }
 
-void *addNode(struct proc *node, struct proc_tree *tree){
-	if (tree == NULL){
+void *addNode(struct proc *node, struct proc_tree *tree) {
+	if (tree == NULL) {
 		tree = malloc(sizeof(struct proc_tree));
 		tree->data = *node;
 	} else {
 		struct proc *current_node = &tree->data;
 		char* current_name = current_node->name;
-		
+
 		// Make a recursive system to add nodes based on parent
 		// data in current node and new node
 
 		int direction = strcmp(current_name, node->parent);
-		if(direction <= 0){
+		if(direction <= 0) {
 			addNode(node, tree->left);
 		} else {
 			addNode(node, tree->right);
 		}
 	}
+	pthread_exit(0);
 }
 
 void read_file(struct proc_tree *tree) {
@@ -70,7 +69,7 @@ void read_file(struct proc_tree *tree) {
 	char *token;
 	struct proc *node;
 
-	while(fgets(line, sizeof(line), fp) != NULL) {	
+	while(fgets(line, sizeof(line), fp) != NULL) {
 		// allocate new proc struct
 		node = malloc(sizeof(struct proc));
 
@@ -81,7 +80,7 @@ void read_file(struct proc_tree *tree) {
 		// get name
 		token = strtok(NULL, ",");
 		strcpy(node->name, token);
-		
+
 		// get priority
 		token = strtok(NULL, ",");
 		sscanf(token, "%d", &node->priority);
@@ -89,18 +88,18 @@ void read_file(struct proc_tree *tree) {
 		// get runtime
 		token = strtok(NULL, "\n");
 		sscanf(token, "%d", &node->memory);
-		
+
 		// add to binary tree
 		addNode(node, tree);
 	}
 }
 
-int main(){
+int main() {
 	struct proc_tree *tree;
 	tree = NULL;
 	read_file(tree);
 	print_node(&tree->data);
 	print_tree(tree);
-	
+
 	return 0;
 }
