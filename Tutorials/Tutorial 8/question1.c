@@ -39,8 +39,6 @@ void print_tree(struct proc_tree *tree) {
 		print_node(node);
 		print_tree(tree->left);
 		print_tree(tree->right);
-	} else {
-		printf("empty\n");
 	}
 }
 
@@ -54,12 +52,12 @@ void addNode(struct proc *node, struct proc_tree **tree) {
 		return;
 	}
 	
-	struct proc *current_node = *tree->data;
+	struct proc *current_node = &(*tree)->data;
 
 	if (strcmp(current_node->name, node->parent) <= 0)
-		addNode(node, &tree->left);
+		addNode(node, &(*tree)->left);
 	else
-		addNode(node, &tree->right);	
+		addNode(node, &(*tree)->right);	
 }
 
 void read_file(struct proc_tree *tree) {
