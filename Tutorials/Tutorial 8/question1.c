@@ -34,33 +34,32 @@ void print_node(struct proc *node) {
 }
 
 void print_tree(struct proc_tree *tree) {
-	if(tree != NULL){
+	if (tree != NULL) {
 		struct proc *node = &tree->data;
 		print_node(node);
 		print_tree(tree->left);
 		print_tree(tree->right);
+	} else {
+		printf("empty\n");
 	}
 }
 
-void *addNode(struct proc *node, struct proc_tree *tree) {
-	if (tree == NULL) {
-		tree = malloc(sizeof(struct proc_tree));
-		tree->data = *node;
-	} else {
-		struct proc *current_node = &tree->data;
-		char* current_name = current_node->name;
-
-		// Make a recursive system to add nodes based on parent
-		// data in current node and new node
-
-		int direction = strcmp(current_name, node->parent);
-		if(direction <= 0) {
-			addNode(node, tree->left);
-		} else {
-			addNode(node, tree->right);
-		}
+void addNode(struct proc *node, struct proc_tree **tree) {
+	if (*tree == NULL) {
+		struct proc_tree *temp = malloc(sizeof(struct proc_tree));
+		temp->data = *node;
+		temp->left = NULL;
+		temp->right = NULL;
+		*tree = temp;
+		return;
 	}
-	pthread_exit(0);
+	
+	struct proc *current_node = *tree->data;
+
+	if (strcmp(current_node->name, node->parent) <= 0)
+		addNode(node, &tree->left);
+	else
+		addNode(node, &tree->right);	
 }
 
 void read_file(struct proc_tree *tree) {
@@ -90,7 +89,8 @@ void read_file(struct proc_tree *tree) {
 		sscanf(token, "%d", &node->memory);
 
 		// add to binary tree
-		addNode(node, tree);
+		print_node(node);
+		addNode(node, &tree);
 	}
 }
 
@@ -98,7 +98,7 @@ int main() {
 	struct proc_tree *tree;
 	tree = NULL;
 	read_file(tree);
-	print_node(&tree->data);
+	//print_node(&tree->data);
 	print_tree(tree);
 
 	return 0;
