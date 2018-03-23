@@ -21,3 +21,35 @@
 // {
 //      ...
 // }
+
+void init_queue(queue *q){
+  q->head = NULL;
+  q->tail = NULL;
+}
+
+bool isQueueEmpty(queue q){
+  return q.head == NULL;
+}
+
+void push(queue *q, node data){
+  data->next = NULL;
+
+  if(!isQueueEmpty(*q))
+		q->tail->next = data;
+	else
+		q->head = data;
+
+	q->tail = data;
+}
+
+node pop(queue *q){
+  if(q == NULL)
+    return NULL;
+  
+  node head = q->head;
+
+  if(head != NULL){
+    q->head = q->head->next;
+  }
+  return head;
+}

@@ -8,7 +8,8 @@
 #ifndef QUEUE_H_
 #define QUEUE_H_
 
-#include "utility.h"
+//#include "utility.h"
+#include <stdbool.h>
 
 // Your linked list structure for your queue
 // typedef ... 
@@ -16,6 +17,17 @@
 //  proc process;
 //  ...
 //} node_t; 
+
+typedef struct node_t {
+  int data;
+  struct node_t *next;
+} node_t;
+typedef node_t* node;
+
+typedef struct queue {
+  node head;
+  node tail;
+} queue;
 
 // Include your relevant FIFO queue functions declarations here they must start 
 // with the extern keyword such as in the following examples:
@@ -27,5 +39,8 @@
 
 // extern node_t *pop(node_t *tail);
 
-
+extern void init_queue(queue *q);
+extern bool isQueueEmpty(queue q);
+extern void push(queue *q, node data);
+extern node pop(queue *q);
 #endif /* QUEUE_H_ */
