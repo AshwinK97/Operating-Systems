@@ -22,6 +22,22 @@
 //      ...
 // }
 
+
+void print_queue(queue *q){
+  if(q->head == NULL)
+    return;
+  
+  node process = q->head;
+  
+  while(process->next != NULL){
+    print_process(process);
+    process = process->next;
+  }
+  
+  print_process(process);
+  return;
+}
+
 void init_queue(queue *q){
   q->head = NULL;
   q->tail = NULL;

@@ -23,10 +23,24 @@ memory_block create_memory_block() {
 
 	return block;
 }
+void print_resource_list(resources resource_list){
+    printf("printers: %d\n", resource_list->printers);
+    printf("scanners: %d\n", resource_list->scanners);
+    printf("modems: %d\n", resource_list->modems);
+    printf("CD_drives: %d\n", resource_list->CD_drives);
+}
 
-void print_memory_block(memory_block block, int block_num){
+void print_process(node process){
     printf("-----------------\n");
-    printf("Block %d\n", block_num);
+    printf("arrival_time: %d\n", process->arrival_time);
+    printf("priority: %d\n", process->priority);
+    printf("processor_time: %d\n", process->processor_time);
+    printf("size: %d\n", process->size);
+    print_resource_list(process->resource_list);
+    printf("-----------------\n\n");
+}
+
+void print_memory_block(memory_block block){
     printf("-----------------\n");
     printf("offset: %d\n", block->offset);
     printf("size: %d\n", block->size);
@@ -39,7 +53,9 @@ void print_memory(){
   memory_block block = head_block;
   
   while(block != NULL){
-    print_memory_block(block, block_num);
+    printf("-----------------\n");
+    printf("Block %d\n", block_num);
+    print_memory_block(block);
     block = block->next;
     block_num++;
   }

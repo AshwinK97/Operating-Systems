@@ -38,4 +38,5 @@ extern void init_queue(queue *q);
 extern bool isQueueEmpty(queue q);
 extern void push(queue *q, node data);
 extern node pop(queue *q);
+extern void print_queue(queue *q);
 #endif /* QUEUE_H_ */

@@ -40,18 +40,30 @@ typedef struct memory_block_t {
 } memory_block_t;
 typedef memory_block_t *memory_block;
 
+typedef struct resources_t {
+  int printers;
+  int scanners;
+  int modems;
+  int CD_drives;
+} resources_t;
+typedef resources_t *resources;
+
 typedef struct node_t {
   int data;
   int arrival_time;
   int priority;
   int processor_time;
+  int size;
   memory_block memory;
+  resources resource_list;
   struct node_t *next;
 } node_t;
 typedef node_t *node;
 
 // Print methods for testing
-extern void print_memory_block(memory_block block, int block_num);
+extern void print_resource_list(resources resource_list);
+extern void print_process(node process);
+extern void print_memory_block(memory_block block);
 extern void print_memory();
 
 // Include your relevant functions declarations here they must start with the 
