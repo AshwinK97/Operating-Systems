@@ -49,7 +49,8 @@ node pop(queue *q){
   node head = q->head;
 
   if(head != NULL){
-    q->head = q->head->next;
+    q->head = head->next;
   }
+  
   return head;
 }

@@ -10,6 +10,7 @@
 
 //#include "utility.h"
 #include <stdbool.h>
+#include "utility.h"
 
 // Your linked list structure for your queue
 // typedef ... 
@@ -17,12 +18,6 @@
 //  proc process;
 //  ...
 //} node_t; 
-
-typedef struct node_t {
-  int data;
-  struct node_t *next;
-} node_t;
-typedef node_t* node;
 
 typedef struct queue {
   node head;
