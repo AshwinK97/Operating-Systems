@@ -20,5 +20,9 @@ extern void read_file(FILE* file, char* buffer, size_t size);
 // Init all queues
 extern void init_all_queues();
 
+// Load the dispatch list
 extern void load_dispatchlist();
+
+// Categorize Jobs into priority queues
+extern void load_priority_queues();
 #endif /* HOSTD_H_ */

@@ -29,12 +29,10 @@ void print_queue(queue *q){
   
   node process = q->head;
   
-  while(process->next != NULL){
+  while(process != NULL){
     print_process(process);
     process = process->next;
   }
-  
-  print_process(process);
   return;
 }
 

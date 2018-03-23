@@ -23,7 +23,7 @@
 #define MEMORY 1024
 
 // Put global environment variables here
-queue q, RealTime, Jobs, P1, P2, P3;
+queue Processes, RealTime, Jobs, P1, P2, P3;
 
 // Define functions declared in hostd.h here
 
@@ -38,6 +38,7 @@ void read_file(FILE* file, char* buffer, size_t size) {
 
 // Init all queues to be filled
 void init_all_queues(){
+  init_queue(&Processes);
   init_queue(&RealTime);
   init_queue(&Jobs);
   init_queue(&P1);
@@ -50,45 +51,67 @@ void load_dispatchlist(FILE *file){
   unsigned int SIZE = 2048;
   char* buffer = malloc(SIZE);
   while(!feof(file)){
-	  fgets(buffer, SIZE, file);
-	  char *token;
-	  node process = malloc(sizeof(node_t));;
-	  resources resource_list = malloc(sizeof(resources_t));;
-	  
-	  token = strtok(buffer, ",");
-		sscanf(token, "%d", &process->arrival_time);
-		
-		token = strtok(NULL, ",");
-		sscanf(token, "%d", &process->priority);
-		
-		token = strtok(NULL, ",");
-		sscanf(token, "%d", &process->processor_time);
-		
-		token = strtok(NULL, ",");
-		sscanf(token, "%d", &process->size);
-		
-		token = strtok(NULL, ",");
-		sscanf(token, "%d", &resource_list->printers);
-		
-		token = strtok(NULL, ",");
-		sscanf(token, "%d", &resource_list->scanners);
-		
-		token = strtok(NULL, ",");
-		sscanf(token, "%d", &resource_list->modems);
-		
-		token = strtok(NULL, ",");
-		sscanf(token, "%d", &resource_list->CD_drives);
-		
-		process->resource_list = resource_list;
-	  
-	  strtok(NULL, "\n");
-	  
-	  if(process->priority == 0){
-	    push(&RealTime, process);
-	  } else {
-	    push(&Jobs, process);
-	  }
+        fgets(buffer, SIZE, file);
+        char *token;
+        node process = malloc(sizeof(node_t));;
+        resources resource_list = malloc(sizeof(resources_t));;
+        
+        token = strtok(buffer, ",");
+        sscanf(token, "%d", &process->arrival_time);
+        
+        token = strtok(NULL, ",");
+        sscanf(token, "%d", &process->priority);
+        
+        token = strtok(NULL, ",");
+        sscanf(token, "%d", &process->processor_time);
+        
+        token = strtok(NULL, ",");
+        sscanf(token, "%d", &process->size);
+        
+        token = strtok(NULL, ",");
+        sscanf(token, "%d", &resource_list->printers);
+        
+        token = strtok(NULL, ",");
+        sscanf(token, "%d", &resource_list->scanners);
+        
+        token = strtok(NULL, ",");
+        sscanf(token, "%d", &resource_list->modems);
+        
+        token = strtok(NULL, ",");
+        sscanf(token, "%d", &resource_list->CD_drives);
+        
+        process->resource_list = resource_list;
+        
+        strtok(NULL, "\n");
+        push(&Processes, process);
 	}
+}
+
+void load_priority_queues(queue *q){
+    if(q->head == NULL)
+        return;
+    
+    node process = pop(q);
+
+    while(process != NULL){
+        switch(process->priority) {
+        case 0:
+            push(&RealTime, process);
+            break;
+        case 1:
+            push(&P1, process);
+            break;
+        case 2:
+            push(&P2, process);
+            break;
+        case 3:
+            push(&P3, process);
+            break;
+        default:
+            break;			
+        }
+        process = pop(q);
+    }
 }
 
 int main(int argc, char *argv[])
@@ -101,8 +124,24 @@ int main(int argc, char *argv[])
   	
   	load_dispatchlist(file);
     
+    load_priority_queues(&Processes);
+
+    printf("Real Time\n");
+    printf("--------------\n");
     print_queue(&RealTime);
-	print_queue(&Jobs);
+    printf("--------------\n");
+    printf("Priority 1\n");
+    printf("--------------\n");
+    print_queue(&P1);
+    printf("--------------\n");
+    printf("Priority 2\n");
+    printf("--------------\n");
+    print_queue(&P2);
+    printf("--------------\n");
+    printf("Priority 3\n");
+    printf("--------------\n");
+    print_queue(&P3);
+    printf("--------------\n");
   	
   	return 0;
     // Add each process structure instance to the job dispatch list queue
