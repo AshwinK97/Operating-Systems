@@ -12,6 +12,7 @@
 // Define your utility functions here, you will likely need to add more...
 int avail_mem = MEMORY;
 memory_block head_block = NULL;
+resources avail_resources = NULL;
 
 memory_block create_memory_block() {
 	memory_block block = malloc(sizeof(memory_block_t));
@@ -23,15 +24,29 @@ memory_block create_memory_block() {
 
 	return block;
 }
+
+void init_resources() {
+  avail_resources = malloc(sizeof(resources_t));
+
+  avail_resources->printers = 2;
+  avail_resources->scanners = 1;
+  avail_resources->modems = 1;
+  avail_resources->CD_drives = 2;
+}
+
 void print_resource_list(resources resource_list){
+    printf("-----------------\n");
     printf("printers: %d\n", resource_list->printers);
     printf("scanners: %d\n", resource_list->scanners);
     printf("modems: %d\n", resource_list->modems);
     printf("CD_drives: %d\n", resource_list->CD_drives);
+    printf("-----------------\n\n");
 }
 
 void print_process(node process){
     printf("-----------------\n");
+    printf("pid: %d\n", process->pid);
+    printf("status: %d\n", process->status);
     printf("arrival_time: %d\n", process->arrival_time);
     printf("priority: %d\n", process->priority);
     printf("processor_time: %d\n", process->processor_time);
@@ -167,12 +182,25 @@ memory_block split_block(memory_block block, int size){
   return new_block;
 }
 
-// free_mem(resources res, int index, int size)
-// {
-//      ...
-// }
+bool resourcesAvailable(resources resource_list){
+  return ((avail_resources->printers >= resource_list->printers) && (avail_resources->scanners >= resource_list->scanners) && (avail_resources->modems >= resource_list->modems) && (avail_resources->CD_drives >= resource_list->CD_drives));
+}
 
-// void load_dispatch(char *dispatch_file, node_t *queue)
-// {
-//      ...
-// }
+bool alloc_resources(resources resource_list){
+  if (!resourcesAvailable(resource_list))
+    return false;
+  
+  avail_resources->printers -= resource_list->printers;
+  avail_resources->scanners -= resource_list->scanners;
+  avail_resources->modems -= resource_list->modems;
+  avail_resources->CD_drives -= resource_list->CD_drives;
+
+  return true;
+}
+
+void free_resources(resources resource_list){
+  avail_resources->printers += resource_list->printers;
+  avail_resources->scanners += resource_list->scanners;
+  avail_resources->modems += resource_list->modems;
+  avail_resources->CD_drives += resource_list->CD_drives;
+}

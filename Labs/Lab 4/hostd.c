@@ -21,20 +21,16 @@
 
 // Put macros or constants here using #define
 #define MEMORY 1024
+#define CRITICAL_MEMORY 64
 
 // Put global environment variables here
 queue Processes, RealTime, Jobs, P1, P2, P3;
+int dispatch_time = 0;
+int timer = 0;
+int status;
+pid_t current_process;
 
-// Define functions declared in hostd.h here
-
-// Reads the contents of a file and stores them in a string.
-void read_file(FILE* file, char* buffer, size_t size) {
-	int i;
-	for(i = 0; !feof(file) && i < size; i++)
-		buffer[i] = fgetc(file);
-
-	buffer[i - 1] = '\0';	//Add the terminating null character.
-}
+// Define functions declared in hostd.h hereå
 
 // Init all queues to be filled
 void init_all_queues(){
@@ -114,48 +110,225 @@ void load_priority_queues(queue *q){
     }
 }
 
+void start_process(node process){
+    int pid = fork();	
+    if(pid < 0)
+        printf("Error: Process not created\n");
+    else if (pid == 0) {
+        execvp("./process", NULL);
+    }
+    else {
+        process->pid = pid;
+        process->status = 1;
+    }
+}
+
+void resume_process(node process){
+    if(kill(process->pid, SIGCONT) != 0) {
+		printf("%d: SIGCONT failed.\n", process->pid);
+		return;
+	} 
+
+    process->status = 1; 
+}
+
+void stop_process(node process){
+    if(kill(process->pid, SIGTSTP) != 0) {
+		printf("%d: SIGTSTP failed.\n", process->pid);
+		return;
+	} 
+    
+	waitpid(process->pid, &status, WUNTRACED); //Wait for process to be stopped before continuing execution
+	if(process->priority < 3){
+        free_mem(process->memory);
+	    free_resources(process->resource_list);
+    }
+    process->status = 2; 
+}
+
+void kill_process(node process){
+    // Send Sig to terminate
+    if(kill(process->pid, SIGINT) != 0) {
+		printf("Terminate of %d failed.\n", process->pid);
+		return;
+	}
+	
+    // Wait for process to be Terminated
+	waitpid(process->pid, &status, WUNTRACED);
+
+	// Free Memory and Resources
+	if(process->priority != 0) {
+		free_mem(process->memory);
+		free_resources(process->resource_list);
+	}
+	process->status = 3;
+}
+
 int main(int argc, char *argv[])
 {
     // ==================== YOUR CODE HERE ==================== //
-    
+
     // Load the dispatchlist
   	FILE *file = fopen("dispatchlist", "r");
   	init_all_queues();
   	
-  	load_dispatchlist(file);
-    
-    load_priority_queues(&Processes);
-
-    printf("Real Time\n");
-    printf("--------------\n");
-    print_queue(&RealTime);
-    printf("--------------\n");
-    printf("Priority 1\n");
-    printf("--------------\n");
-    print_queue(&P1);
-    printf("--------------\n");
-    printf("Priority 2\n");
-    printf("--------------\n");
-    print_queue(&P2);
-    printf("--------------\n");
-    printf("Priority 3\n");
-    printf("--------------\n");
-    print_queue(&P3);
-    printf("--------------\n");
-  	
-  	return 0;
     // Add each process structure instance to the job dispatch list queue
-
+  	load_dispatchlist(file);
+  	
     // Iterate through each item in the job dispatch list, add each process
     // to the appropriate queues
-
+    load_priority_queues(&Processes);
+    
     // Allocate the resources for each process before it's executed
+    init_resources();
+    alloc_mem(64);
 
-    // Execute the process binary using fork and exec
+    while(!isQueueEmpty(RealTime)){
+        // Grab process from Queue
+        node process = pop(&RealTime);
+        bool enoughResources = false;
+        bool enoughMemory = false;
 
-    // Perform the appropriate signal handling / resource allocation and de-alloaction
+        // Allocate process resources
+        enoughResources = alloc_resources(process->resource_list);
+        //process->memory = alloc_mem(process->size);
 
-    // Repeat until all processes have been executed, all queues are empty
-     
+        if(process->memory != NULL)
+            enoughMemory = true;
+        
+        if(!enoughResources){
+            push(&RealTime, process);
+            continue;
+        }
+
+        // Execute the process binary using fork and exec
+
+        start_process(process);
+
+        timer = 0;
+        while(timer != process->processor_time){
+            timer += 1;
+            sleep(1);
+        }
+
+        // Perform the appropriate signal handling / resource allocation and de-alloaction
+        kill_process(process);
+        
+        // Repeat until all processes have been executed, all queues are empty
+    }
+
+    while(!isQueueEmpty(P1)){
+        // Grab process from Queue
+        node process = pop(&P1);
+        bool enoughResources = false;
+        bool enoughMemory = false;
+
+        // Allocate process resources
+        enoughResources = alloc_resources(process->resource_list);
+        process->memory = alloc_mem(process->size);
+
+        if(process->memory != NULL)
+            enoughMemory = true;
+        
+        if(!enoughResources || !enoughMemory){
+            push(&P1, process);
+            continue;
+        }
+
+        // Execute the process binary using fork and exec
+        start_process(process);
+
+        // Perform the appropriate signal handling / resource allocation and de-alloaction
+        sleep(1);
+        stop_process(process);
+
+        process->processor_time -= 1;
+
+        if(process->processor_time == 0){
+            kill_process(process);
+        } else {
+            push(&P2, process);
+        }
+        // Repeat until all processes have been executed, all queues are empty
+    }
+
+    while(!isQueueEmpty(P2)){
+        // Grab process from Queue
+        node process = pop(&P2);
+        bool enoughResources = false;
+        bool enoughMemory = false;
+
+        // Allocate process resources
+        enoughResources = alloc_resources(process->resource_list);
+        process->memory = alloc_mem(process->size);
+
+        if(process->memory != NULL)
+            enoughMemory = true;
+        
+        if(!enoughResources || !enoughMemory){
+            push(&P2, process);
+            continue;
+        }
+
+        // Execute the process binary using fork and exec
+        if(process->status != 2){
+            start_process(process);
+        } else {
+            resume_process(process);
+        }
+
+        // Perform the appropriate signal handling / resource allocation and de-alloaction
+        sleep(1);
+        stop_process(process);
+
+        process->processor_time -= 1;
+
+        if(process->processor_time == 0){
+            kill_process(process);
+        } else {
+            push(&P3, process);
+        }
+        // Repeat until all processes have been executed, all queues are empty
+    }
+
+    while(!isQueueEmpty(P3)){
+        // Grab process from Queue
+        node process = pop(&P3);
+        bool enoughResources = false;
+        bool enoughMemory = false;
+
+        // Allocate process resources
+        enoughResources = alloc_resources(process->resource_list);
+        process->memory = alloc_mem(process->size);
+
+        if(process->memory != NULL)
+            enoughMemory = true;
+        
+        if(!enoughResources || !enoughMemory){
+            push(&P3, process);
+            continue;
+        }
+
+        // Execute the process binary using fork and exec
+        if(process->status != 2){
+            start_process(process);
+        } else {
+            resume_process(process);
+        }
+
+        // Perform the appropriate signal handling / resource allocation and de-alloaction
+        sleep(1);
+        stop_process(process);
+
+        process->processor_time -= 1;
+
+        if(process->processor_time == 0){
+            kill_process(process);
+        } else {
+            push(&P3, process);
+        }
+        // Repeat until all processes have been executed, all queues are empty
+    }
+
     return EXIT_SUCCESS;
 }

@@ -49,16 +49,20 @@ typedef struct resources_t {
 typedef resources_t *resources;
 
 typedef struct node_t {
-  int data;
+  int pid;
   int arrival_time;
   int priority;
   int processor_time;
   int size;
+  int status;
   memory_block memory;
   resources resource_list;
   struct node_t *next;
 } node_t;
 typedef node_t *node;
+
+// init Methods
+extern void init_resources();
 
 // Print methods for testing
 extern void print_resource_list(resources resource_list);
@@ -75,6 +79,11 @@ extern void print_memory();
 // extern int alloc_mem(resources res, int size);
 extern memory_block alloc_mem(int size);
 extern memory_block split_block(memory_block block, int size);
+
+// Resources Allocation and Release
+extern bool resourcesAvailable(resources resource_list);
+extern bool alloc_resources(resources resource_list);
+extern void free_resources(resources resource_list);
 
 // Function to free the allocated contiguous chunk of memory in your resources
 // structure memory array, should take the resource struct, start index, and 

@@ -28,8 +28,7 @@ struct queue {
 	struct queue *next;
 };
 
-void print_process(struct proc *print_process) {
-	struct proc* process = print_process;
+void print_process(struct proc *process) {
 
 	printf("name: %s\n", process->name);
 	printf("priority: %d\n", process->priority);
@@ -45,12 +44,30 @@ void push(struct queue *head, struct proc new_process) {
 	struct proc process = new_process;
 
 	// find the next available space
-	while(current->next != NULL)
+	while(current->next != NULL){
+		print_process(&current->process);
 		current = current->next;
+	}
 	
 	current->next = malloc(sizeof(struct queue));
 	current->next->process = process;
 	current->next->next = NULL;
+}
+
+struct proc* pop(struct queue** head){
+	struct proc* process_popped = NULL;
+	struct queue* new_head = NULL;
+
+	if(*head == NULL)
+		return process_popped;
+	
+	new_head = (*head)->next;
+	process_popped = &(*head)->process;
+
+	free(*head);
+	*head = new_head;
+
+	return process_popped;
 }
 
 void print_list(struct queue *head) {
@@ -114,12 +131,10 @@ int main() {
 	secondary_head->next = NULL;
 
 	read_file(priority_head, secondary_head);
-	printf("\n---------------------\n");
-	printf("\nPriority Queue\n");
-	printf("\n---------------------\n\n");
-	print_list(priority_head);
-	printf("\n---------------------\n");
-	printf("\nSecondary Queue\n");
-	printf("\n---------------------\n\n");
-	print_list(secondary_head);
+
+	// Current process
+	struct proc *current_process;
+
+	while((current_process = pop(&priority_head)) != NULL){
+	}
 }
