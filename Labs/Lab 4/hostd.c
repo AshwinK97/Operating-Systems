@@ -77,7 +77,8 @@ void load_dispatchlist(FILE *file){
         sscanf(token, "%d", &resource_list->CD_drives);
         
         process->resource_list = resource_list;
-        
+        process->status = 0;
+
         strtok(NULL, "\n");
         push(&Processes, process);
 	}
@@ -294,21 +295,24 @@ int main(int argc, char *argv[])
     while(!isQueueEmpty(P3)){
         // Grab process from Queue
         node process = pop(&P3);
-        bool enoughResources = false;
-        bool enoughMemory = false;
 
-        // Allocate process resources
-        enoughResources = alloc_resources(process->resource_list);
-        process->memory = alloc_mem(process->size);
+        if(process->status == 0){
+            bool enoughResources = false;
+            bool enoughMemory = false;
 
-        if(process->memory != NULL)
-            enoughMemory = true;
-        
-        if(!enoughResources || !enoughMemory){
-            push(&P3, process);
-            continue;
+            // Allocate process resources
+            enoughResources = alloc_resources(process->resource_list);
+            process->memory = alloc_mem(process->size);
+
+            if(process->memory != NULL)
+                enoughMemory = true;
+            
+            if(!enoughResources || !enoughMemory){
+                push(&P3, process);
+                continue;
+            }
         }
-
+        
         // Execute the process binary using fork and exec
         if(process->status != 2){
             start_process(process);
