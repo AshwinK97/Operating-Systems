@@ -1,13 +1,15 @@
-# Lab 4 - HOST Dispatcher Shell
+#Link to Repository: [Lab 4](https://github.com/AshwinK97/Operating-Systems/tree/master/Labs/Lab%204)
 
-### Link to Repository: [Lab 4](https://github.com/AshwinK97/Operating-Systems/tree/master/Labs/Lab%204)
-
+## Group 3
 
 ## Group members:
+
 Jasindan Rasalingam: 100584595  
 Darron Singh: 100584624  
 Kaushal Patel: 100586212  
 Ashwin Kamalakannan: 100584423
+
+
 
 ---
 
