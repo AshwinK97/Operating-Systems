@@ -16,8 +16,10 @@ OpenMP (Open Multi-processing) is an API for writing multithreaded applications.
 ```
 
 ## 4. What does the **reduction** do in the \#pragma definition to execute a loop in parallel?
+Reduction is used when we have variables that multiple threads are changing throughout the parallel loop. To handle this, we use `reductuon(operation:var)`, where *operation* is how we want to deal with the variables and *var* is the variable name.
 
 ## 5. Explain the **critical** and **private()** declarations used in OpenMP.
+the critical declaration defines a critical section in a parllel section of code. This section will be mutally exclusive and only allow 1 thread to execute it at a time. The private declaration specifies variables that a parallel section should allocate for each individual thread, rather than share among threads. Each thread will have it's own instances of the variables defined as private.
 
 # Application Questions
 
