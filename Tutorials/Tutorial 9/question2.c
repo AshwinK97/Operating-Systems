@@ -23,7 +23,7 @@ int main (int argc, char* argv[]) {
 	for (long int i = 0; i < n; i++) {
 		x = i * dx;
 		tid = omp_get_thread_num();
-		printf("thread %d -> x: %f, i: %ld, dx: %f\n", tid, x, i, dx);
 		y[i] = exp(x) * cos(x) * sin(x) * sqrt(5 * x + 6.0);
+		printf("thread %d -> x: %f, i: %ld, dx: %f, y[%ld]: %f\n", tid, x, i, dx, i, y[i]);
 	}
 }

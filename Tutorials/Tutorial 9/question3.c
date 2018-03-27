@@ -30,6 +30,6 @@ int main () {
 	#pragma omp parallel for num_threads(10) reduction(+:pnorm)
 	for (i=0; i<N; i++)
 		pnorm += fabs(x[i]);
-	printf("Parallel loop elapsed time: %6f\n", (double)(clock() - start)/CLOCKS_PER_SEC);
+	printf("Parallel loop elapsed time: %.6f\n", (double)(clock() - start)/CLOCKS_PER_SEC);
 	printf("Parallel norm = %f\n", pnorm);
 }
