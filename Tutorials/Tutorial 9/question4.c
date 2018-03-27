@@ -5,7 +5,7 @@
 #include <math.h>
 #include <omp.h>
 
-#define N 10
+#define N 100
 
 void print_matrix(int matrix[N][N]) {
 	int i, j;
@@ -31,15 +31,23 @@ int main () {
 		}
 	}
 
-	print_matrix(a);
-	print_matrix(b);
-
 	// calculate matrix product ab
-	//#pragma omp parallel for num_threads(100)
-	//for (i=0; i<N; i++) {
-	//	for (j=0; j<N; j++) {
-	//		printf("%d from thread %d\n", a[i][j], omp_get_thread_num());
-	//		printf("%d from thread %d\n", b[i][j], omp_get_thread_num());
-	//	}
-	//}
+	#pragma omp parallel for num_threads(N) private(i, j, k)
+	for (i=0; i<N; i++) {
+		for (j=0; j<N; j++) {
+			int sum = 0;
+			for (k=0; k<N; k++) {
+				sum += a[i][k]*b[k][j];
+			}
+			c[i][j] = sum;
+		}
+	}
+	
+	// print results
+	printf("Matrix a:\n");
+	print_matrix(a);
+	printf("Matrix b:\n");
+	print_matrix(b);
+	printf("Matrix product ab:\n");
+	print_matrix(c);
 }
