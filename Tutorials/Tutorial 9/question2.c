@@ -1,11 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <unistd.h>
 #include <math.h>
 #include <omp.h>
 
 int main (int argc, char* argv[]) {
+
+	// check for arguments
+	if (argc < 2) {
+		printf("question1.o: number of threads not specified\n");
+		return -1;
+	}
+
 	double x = 0;
 	long int n = 100000000;
 	double y[n];
